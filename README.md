@@ -32,4 +32,4 @@ npm install
 nodemon index.js
 ```
 
-- The backend should now be running at http://localhost:5000
+- The backend should now be running at http://localhost:3000
