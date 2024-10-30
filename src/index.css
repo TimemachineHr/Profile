@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#orgChart .node .field_0 {
+  @apply text-lg font-semibold text-gray-800;
+}
+
+#orgChart .node .field_1 {
+  @apply text-sm text-gray-500;
+}
