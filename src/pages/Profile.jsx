@@ -2,9 +2,9 @@ import React from "react";
 import ProfileCard from "../components/ProfileCard";
 import Attendance from "../components/Attendance/Attendance";
 import Tasks from "../components/Tasks";
-import Notifications from "../components/Notifications";
-import DailySchedule from "../components/DailySchedule";
-import ApplyLeave from "../components/ApplyLeave";
+import Notifications from "../components/Notifications/Notifications";
+import DailySchedule from "../components/DailySchedule/DailySchedule";
+import ApplyLeave from "../components/ApplyLeave/ApplyLeave";
 import PaySlip from "../components/PaySlip";
 
 const Profile = () => {

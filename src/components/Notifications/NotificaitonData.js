@@ -1,0 +1,58 @@
+export const notificationData = [
+  {
+    id: 1,
+    icon: "FaFileAlt",
+    content: "Oct Payslip Received",
+    time: "10:00 AM",
+    date: "Today",
+  },
+  {
+    id: 2,
+    icon: "FaReceipt",
+    content: "Expense Claim Approved",
+    time: "1:00 PM",
+    date: "Today",
+  },
+  {
+    id: 3,
+    icon: "FaTasks",
+    content: "Task assigned by John Doe",
+    time: "9:00 AM",
+    date: "Yesterday",
+  },
+  {
+    id: 4,
+    icon: "FaReceipt",
+    content: "Expense Claim Received",
+    time: "12:00 PM",
+    date: "Yesterday",
+  },
+  {
+    id: 5,
+    icon: "FaFileAlt",
+    content: "Policy Update Notification",
+    time: "3:00 PM",
+    date: "Yesterday",
+  },
+  {
+    id: 6,
+    icon: "FaTasks",
+    content: "New task assigned by Jane Doe",
+    time: "10:30 AM",
+    date: "Earlier",
+  },
+  {
+    id: 7,
+    icon: "FaBell",
+    content: "Reminder: Team Meeting Tomorrow",
+    time: "2:30 PM",
+    date: "Earlier",
+  },
+  {
+    id: 8,
+    icon: "FaFileAlt",
+    content: "Project Deadline Extended",
+    time: "4:00 PM",
+    date: "Earlier",
+  },
+];

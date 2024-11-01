@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaClipboardCheck, FaCoffee } from "react-icons/fa";
+import {
+  FaClipboardCheck,
+  FaCoffee,
+  FaSuitcase,
+  FaRegClock,
+} from "react-icons/fa";
 
 const Attendance = () => {
   const [isClockedIn, setIsClockedIn] = useState(false);
@@ -44,14 +49,14 @@ const Attendance = () => {
   };
 
   return (
-    <div className="relative rounded-2xl bg-white shadow-lg h-58 p-8 flex flex-col md:flex-row items-stretch text-center md:col-span-2 md:text-left space-y-8 md:space-y-0 md:space-x-8">
+    <div className="relative rounded-2xl bg-white shadow-lg h-58 p-4 flex flex-col md:flex-row items-stretch text-center md:col-span-2 md:text-left space-y-8 md:space-y-0 md:space-x-4">
       <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
         <button className="text-sm text-blue-600 hover:underline">
           View Attendance History
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center md:items-start space-y-6">
+      <div className="flex-1 flex flex-col items-center md:items-start space-y-4 w-full md:w-1/2">
         <div className="flex items-center space-x-4">
           <FaClipboardCheck size={36} className="text-[#007b5e]" />
           <h2 className="font-semibold text-xl text-gray-800">
@@ -75,6 +80,13 @@ const Attendance = () => {
             </p>
           </>
         )}
+        <div className="text-gray-700 text-sm space-y-1 text-center mt-2 overflow-y-auto max-h-10">
+          <ul className="text-sm text-gray-600 space-y-1">
+            <li>Project-A : 12:00 - 12:30(30 Min)</li>
+            <li>Project-B : 13:00 - 14:00 (1 Hr)</li>
+            <li>Project-C : 15:00 - 16:00 (1 Hr)</li>
+          </ul>
+        </div>
         <div className="flex space-x-8">
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center">
@@ -97,16 +109,16 @@ const Attendance = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center w-full md:w-1/3 space-y-4 justify-center">
+      <div className="flex flex-col items-center w-full md:w-1/2 space-y-2 justify-center">
         {!isClockedIn ? (
           <button
             onClick={handleClockIn}
-            className="px-6 py-3 bg-[#007b5e] text-white rounded-md hover:bg-[#007b5e] w-full"
+            className="px-4 py-3 bg-[#007b5e] text-white rounded-lg  hover:bg-[#007b5e] w-full"
           >
             Clock In
           </button>
         ) : (
-          <div className="flex flex-col items-center space-y-3 w-full">
+          <div className="flex flex-col items-center space-y-2 w-full">
             <p className="text-lg font-semibold text-gray-800">
               Timer:{" "}
               {Math.floor(timer / 3600)
@@ -118,7 +130,7 @@ const Attendance = () => {
             <div className="flex space-x-4 w-full">
               <button
                 onClick={handleTakeBreak}
-                className={`px-4 py-2 rounded-md text-white flex items-center space-x-1 w-full ${
+                className={`px-4 py-2 rounded-lg text-white flex items-center space-x-1 w-full ${
                   isOnBreak
                     ? "bg-[#007b5e] hover:bg-[#124d3f]"
                     : "bg-yellow-500 hover:bg-yellow-600"
@@ -129,31 +141,49 @@ const Attendance = () => {
               </button>
               <button
                 onClick={handleClockOut}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 w-full"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full"
               >
                 Clock Out
               </button>
             </div>
           </div>
         )}
-        <div className="flex flex-col items-center">
-          <button
-            className="px-4 py-2 bg-[#007b5e] text-white rounded-md hover:bg-[#124d3f] mb-2"
-            onClick={() => setShowProjectModal(true)}
-          >
-            Switch Project
-          </button>
-          <div className="text-gray-700 text-sm space-y-1 text-center">
-            <p className="font-semibold">Project A: 12:00 - 12:30(30 Min)</p>
-            <p className="font-semibold">
-              Project B: 13:00 - 14:45(1 Hr 45 Min)
-            </p>
-          </div>
+        <div
+          className="flex items-center cursor-pointer px-4 py-1"
+          onClick={() => setShowProjectModal(true)}
+        >
+          <FaSuitcase size={20} className="mr-2" /> {/* Suitcase Icon */}
+          <span>Switch Project</span>
         </div>
+        <div className="h-22 bg-gray-100 rounded-xl  mt-4 flex items-center w-full">
+          {/* Left Side: General Shift and Date */}
+          <div className="flex mr-1 items-center text-center flex-grow">
+            <div className="text-sm text-gray-600">
+              <span className="block">Mon</span>
+              <span className="block">1 Nov 2024</span>
+              <span className="font-semibold text-green-500 border border-green-500 rounded-md px-1 mr-2">
+                GS
+              </span>
+            </div>
+          </div>
 
-        <div className="absolute bottom-4 right-4 text-sm text-gray-600">
-          Upcoming Work Hours:{" "}
-          <span className="font-semibold">09:00 AM, 31 Oct 2024 (IND)</span>
+          {/* Vertical Line */}
+          <div className="h-20 border-l border-gray-300 mx-2" />
+
+          {/* Right Side: Start and End Times */}
+          <div className="flex items-center">
+            <div className="flex items-center">
+              <span className="h-2.5 w-2.5 bg-green-500 rounded-full mr-1" />
+              <span className="text-gray-600">9:00 AM</span>
+              <hr className="border border-gray-300 h-0 w-8 ml-1 mr-1 " />
+              <span className="h-2.5 w-2.5 bg-red-500 rounded-full mx-2" />
+              <span className="text-gray-600">6:00 PM</span>
+            </div>
+            <div className="flex items-center ml-1">
+              <FaRegClock className="text-gray-600 mr-1" />
+              <span className="text-gray-600">9 hrs</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -181,17 +211,17 @@ const Attendance = () => {
             <h2 className="text-lg font-semibold text-gray-800 mt-4">
               Select Project
             </h2>
-            <select className="w-full border border-gray-300 rounded-lg p-2 mb-4">
-              <option>Project A</option>
-              <option>Project B</option>
-              <option>Project C</option>
+            <select className="border border-gray-300 rounded-md w-full p-2">
+              <option value="">Project 1</option>
+              <option value="">Project 2</option>
+              <option value="">Project 3</option>
             </select>
 
             <button
               onClick={() => setShowProjectModal(false)}
-              className="bg-[#007b5e] text-white px-4 py-2 rounded-lg hover:bg-[#124d3f] w-full"
+              className="w-full bg-[#007b5e] text-white py-2 rounded-md hover:bg-[#005f47]"
             >
-              Confirm Clock-In
+              Save
             </button>
           </div>
         </div>
