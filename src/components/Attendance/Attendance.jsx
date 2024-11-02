@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaClipboardCheck,
-  FaCoffee,
-  FaSuitcase,
-  FaRegClock,
-} from "react-icons/fa";
+import { FaClipboardCheck, FaCoffee, FaClock } from "react-icons/fa";
+import { LuRefreshCw } from "react-icons/lu";
+import { TbFingerprintScan } from "react-icons/tb";
 
 const Attendance = () => {
   const [isClockedIn, setIsClockedIn] = useState(false);
@@ -58,7 +55,7 @@ const Attendance = () => {
 
       <div className="flex-1 flex flex-col items-center md:items-start space-y-4 w-full md:w-1/2">
         <div className="flex items-center space-x-4">
-          <FaClipboardCheck size={36} className="text-[#007b5e]" />
+          <TbFingerprintScan size={36} className="text-[#007b5e]" />
           <h2 className="font-semibold text-xl text-gray-800">
             Mark Attendance
           </h2>
@@ -80,7 +77,7 @@ const Attendance = () => {
             </p>
           </>
         )}
-        <div className="text-gray-700 text-sm space-y-1 text-center mt-2 overflow-y-auto max-h-10">
+        <div className="text-gray-700 text-sm space-y-1 text-left mt-2 overflow-y-auto max-h-10">
           <ul className="text-sm text-gray-600 space-y-1">
             <li>Project-A : 12:00 - 12:30(30 Min)</li>
             <li>Project-B : 13:00 - 14:00 (1 Hr)</li>
@@ -109,16 +106,16 @@ const Attendance = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center w-full md:w-1/2 space-y-2 justify-center">
+      <div className="flex flex-col items-center w-full md:w-1/2  justify-center">
         {!isClockedIn ? (
           <button
             onClick={handleClockIn}
-            className="px-4 py-3 bg-[#007b5e] text-white rounded-lg  hover:bg-[#007b5e] w-full"
+            className="px-4 py-3 bg-[#007b5e] mt-12 text-white rounded-lg hover:bg-[#007b5e] w-full"
           >
             Clock In
           </button>
         ) : (
-          <div className="flex flex-col items-center space-y-2 w-full">
+          <div className="flex flex-col items-center mt-9 space-y-2 w-full">
             <p className="text-lg font-semibold text-gray-800">
               Timer:{" "}
               {Math.floor(timer / 3600)
@@ -127,61 +124,74 @@ const Attendance = () => {
               :{(Math.floor(timer / 60) % 60).toString().padStart(2, "0")}:
               {(timer % 60).toString().padStart(2, "0")}
             </p>
-            <div className="flex space-x-4 w-full">
-              <button
-                onClick={handleTakeBreak}
-                className={`px-4 py-2 rounded-lg text-white flex items-center space-x-1 w-full ${
-                  isOnBreak
-                    ? "bg-[#007b5e] hover:bg-[#124d3f]"
-                    : "bg-yellow-500 hover:bg-yellow-600"
-                }`}
-              >
-                <FaCoffee />
-                <span>{isOnBreak ? "End Break" : "Take Break"}</span>
-              </button>
-              <button
-                onClick={handleClockOut}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full"
-              >
-                Clock Out
-              </button>
+            <div className="flex justify-center items-center  space-x-4 w-full">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-4">
+                  {" "}
+                  <button
+                    onClick={handleTakeBreak}
+                    title={isOnBreak ? "End Break" : "Take Break"}
+                  >
+                    <FaCoffee
+                      className={`text-xl ${
+                        isOnBreak
+                          ? "text-yellow-500 hover:text-yellow-600"
+                          : "text-gray-600 hover:text-gray-800"
+                      }`}
+                    />{" "}
+                  </button>
+                  <button
+                    onClick={handleClockOut}
+                    className="px-4 py-2 border-2 border-gray-500 font-semibold text-gray-600 rounded-lg hover:bg-gray-200 hover:text-gray-800 flex-grow text-center"
+                    title="Clock Out"
+                  >
+                    Clock Out
+                  </button>
+                  <div
+                    className="flex items-center cursor-pointer"
+                    onClick={() => setShowProjectModal(true)}
+                    title="Switch Project"
+                  >
+                    <LuRefreshCw
+                      size={24}
+                      className="text-lg  text-gray-600 hover:text-gray-800"
+                    />{" "}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
-        <div
-          className="flex items-center cursor-pointer px-4 py-1"
-          onClick={() => setShowProjectModal(true)}
-        >
-          <FaSuitcase size={20} className="mr-2" /> {/* Suitcase Icon */}
-          <span>Switch Project</span>
-        </div>
-        <div className="h-22 bg-gray-100 rounded-xl  mt-4 flex items-center w-full">
-          {/* Left Side: General Shift and Date */}
-          <div className="flex mr-1 items-center text-center flex-grow">
-            <div className="text-sm text-gray-600">
-              <span className="block">Mon</span>
-              <span className="block">1 Nov 2024</span>
-              <span className="font-semibold text-green-500 border border-green-500 rounded-md px-1 mr-2">
-                GS
-              </span>
+
+        <div className="mt-auto w-full">
+          {" "}
+          <h3 className="mt-4 text-xl font-semibold text-gray-800 text-center">
+            Upcoming Work Hours
+          </h3>
+          <div className="h-22 bg-gray-100 rounded-xl mt-2 flex items-center w-full">
+            <div className="flex mr-1 ml-3 items-center text-center flex-grow">
+              <div className="text-sm text-gray-600">
+                <span className="block">Mon</span>
+                <span className="block">1 Nov 2024</span>
+                <span className="font-semibold text-green-500 border border-green-500 rounded-md px-1 mr-2">
+                  GS
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* Vertical Line */}
-          <div className="h-20 border-l border-gray-300 mx-2" />
-
-          {/* Right Side: Start and End Times */}
-          <div className="flex items-center">
+            <div className="h-20 border-l border-gray-300 mx-2" />
             <div className="flex items-center">
-              <span className="h-2.5 w-2.5 bg-green-500 rounded-full mr-1" />
-              <span className="text-gray-600">9:00 AM</span>
-              <hr className="border border-gray-300 h-0 w-8 ml-1 mr-1 " />
-              <span className="h-2.5 w-2.5 bg-red-500 rounded-full mx-2" />
-              <span className="text-gray-600">6:00 PM</span>
-            </div>
-            <div className="flex items-center ml-1">
-              <FaRegClock className="text-gray-600 mr-1" />
-              <span className="text-gray-600">9 hrs</span>
+              <div className="flex items-center">
+                <span className="h-2.5 w-2.5 bg-green-500 rounded-full mr-1" />
+                <span className="text-gray-600">9:00 AM</span>
+                <hr className="border border-gray-300 h-0 w-8 ml-1 mr-1" />
+                <span className="h-2.5 w-2.5 bg-red-500 rounded-full mx-2" />
+                <span className="text-gray-600">6:00 PM</span>
+              </div>
+              <div className="flex items-center ml-1 mr-1">
+                <FaClock className="text-gray-600 mr-1" />
+                <span className="text-gray-600">9 hrs</span>
+              </div>
             </div>
           </div>
         </div>

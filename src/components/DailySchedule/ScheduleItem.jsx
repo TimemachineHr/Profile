@@ -11,7 +11,7 @@ const ScheduleItem = ({ item, index, toggleComplete }) => {
       <div className="flex items-center space-x-2">
         <FaCheckCircle
           className={`${
-            item.completed ? "text-green-400" : "text-gray-400"
+            item.completed ? "text-[#007b5e]" : "text-gray-400"
           } cursor-pointer`}
           onClick={() => toggleComplete(index)}
         />

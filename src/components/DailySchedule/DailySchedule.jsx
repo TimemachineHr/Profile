@@ -37,14 +37,6 @@ const DailySchedule = () => {
     });
   };
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
@@ -63,20 +55,24 @@ const DailySchedule = () => {
   };
 
   return (
-    <div className="rounded-2xl bg-white shadow-lg h-64 p-4 flex flex-col relative">
-      <h3 className="font-bold text-lg text-gray-800 mb-2 flex items-center">
-        <FaCalendarAlt className="mr-2 text-purple-500" /> Plan My Day
-      </h3>
+    <div className="rounded-2xl bg-white shadow-lg h-64 p-4 flex flex-col">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="font-bold text-lg text-gray-800 flex items-center">
+          Plan My Day
+        </h3>
 
-      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-2">
           <FaLock className="text-gray-500" />
           <span className="text-gray-700 font-md">Private</span>
         </div>
+      </div>
+
+      <div className="flex items-center justify-between mb-2">
         <DateNavigator currentDate={currentDate} changeDay={changeDay} />
         <button
           onClick={handleCopy}
           className="text-gray-500 hover:text-gray-700"
+          title="Copy Day"
         >
           <FaCopy />
         </button>
@@ -97,21 +93,23 @@ const DailySchedule = () => {
 
       <button
         onClick={openModal}
-        className="absolute bottom-4 right-4 px-3 py-2 bg-[#007b5e] text-white rounded-lg flex items-center space-x-2 hover:bg-[#124d3f]"
+        className="ml-auto px-2 py-1 bg-[#007b5e] text-white rounded-lg flex items-center space-x-1 hover:bg-[#124d3f]"
       >
-        <FaPlus />
+        <FaPlus className="text-sm" />
         <span>Add Plan</span>
       </button>
 
       {isModalOpen && (
-        <ScheduleModal
-          closeModal={closeModal}
-          newTime={newTime}
-          setNewTime={setNewTime}
-          newDescription={newDescription}
-          setNewDescription={setNewDescription}
-          handleAddPlan={handleAddPlan}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <ScheduleModal
+            closeModal={closeModal}
+            newTime={newTime}
+            setNewTime={setNewTime}
+            newDescription={newDescription}
+            setNewDescription={setNewDescription}
+            handleAddPlan={handleAddPlan}
+          />
+        </div>
       )}
     </div>
   );

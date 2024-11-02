@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-#orgChart .node .field_0 {
-  @apply text-lg font-semibold text-gray-800;
+.organization-chart svg {
+  background-color: #f9fafb;
 }
-
-#orgChart .node .field_1 {
-  @apply text-sm text-gray-500;
+.link {
+  stroke: #ccc;
+  stroke-width: 1.5px;
 }

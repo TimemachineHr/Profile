@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaBell, FaTasks, FaFileAlt, FaReceipt } from "react-icons/fa";
 import { notificationData } from "./NotificaitonData";
+import MessageModal from "./NotificationModal";
 
 const iconMap = {
   FaBell: <FaBell />,
@@ -10,6 +11,8 @@ const iconMap = {
 };
 
 const Notifications = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const groupedNotifications = notificationData.reduce((acc, notification) => {
     (acc[notification.date] = acc[notification.date] || []).push(notification);
     return acc;
@@ -18,7 +21,7 @@ const Notifications = () => {
   return (
     <div className="rounded-2xl bg-white shadow-lg h-64 p-4 flex flex-col">
       <h3 className="font-bold text-lg text-gray-800 mb-4 flex items-center">
-        <FaBell className="mr-2 text-yellow-500" /> Happenings
+        Happenings
       </h3>
 
       <div className="overflow-y-auto flex-grow">
@@ -48,6 +51,17 @@ const Notifications = () => {
           </div>
         ))}
       </div>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="ml-auto px-2 py-1 bg-[#007b5e] text-white rounded-lg flex items-center space-x-1 hover:bg-[#124d3f]"
+      >
+        <span>Send Message</span>
+      </button>
+
+      <MessageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

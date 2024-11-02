@@ -1,85 +1,120 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PayslipIcon from "../assets/payslip.svg";
+import { FaLock } from "react-icons/fa";
 
 const PaySlip = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
+  const authenticateUser = () => {
+    setIsAuthenticated(true);
+    setTimeout(() => {
+      setIsAuthenticated(false);
+    }, 5000);
+  };
 
-  const closeModal = () => setIsModalOpen(false);
+  const basicSalary = 1140.0;
+  const takeHome = 6140.0;
+  const productivity = 160.45;
+  const gross = 6840.0;
 
   return (
-    <div className="rounded-2xl bg-white shadow-lg h-52 p-6 flex flex-col items-center justify-center text-center">
-      <div className="flex items-center space-x-2">
-        <img src={PayslipIcon} alt="Pay-Slip" />
-        <h2 className="font-bold text-xl text-gray-800">PaySlip</h2>
-      </div>
-      <button
-        onClick={openModal}
-        className="mt-6 bg-[#007b5e] text-white px-6 py-2 rounded-lg hover:bg-[#124d3f]"
-      >
-        View PaySlip
-      </button>
+    <div className="rounded-2xl bg-white shadow-lg h-60 p-4 flex flex-col items-center justify-center text-center">
+      {!isAuthenticated ? (
+        <div className="flex flex-col items-center">
+          <FaLock className="h-6 w-6 mb-2" />
+          <p className="text-gray-600 text-sm mb-4">
+            Authenticate in Mobile App to View Payslip
+          </p>
+          <button
+            onClick={authenticateUser}
+            className="bg-[#007b5e] text-white px-4 py-2 rounded-lg hover:bg-[#124d3f]"
+          >
+            Authenticate
+          </button>
+        </div>
+      ) : (
+        <div>
+          <div className="flex items-center justify-center space-x-2 mb-4 text-center">
+            <img src={PayslipIcon} alt="Pay-Slip" />
+            <h2 className="font-bold text-xl text-gray-800">PaySlip</h2>
+          </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-lg w-96 p-6 relative">
-            <div className="flex items-center space-x-2">
-              <img
-                src={PayslipIcon}
-                alt="Pay-Slip"
-                className="h-8 w-8 inline-block"
-              />
-              <h2 className="text-xl font-semibold text-gray-800 mb-0">
-                Detailed PaySlip
-              </h2>
-            </div>
-            <button
-              onClick={closeModal}
-              className="absolute top-1 right-3 text-gray-600 hover:text-gray-800 text-2xl"
-              aria-label="Close"
-            >
-              &times;
-            </button>
-
-            <div className="mt-4 mb-6">
-              <p className="text-gray-600 text-sm">
-                Here is the detailed payslip information for the employee.
+          <div className="flex items-center space-x-4">
+            <div className="relative w-24 h-24">
+              <svg viewBox="0 0 36 36" className="w-full h-full">
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="15.915"
+                  fill="none"
+                  stroke="#e5e5e5"
+                  strokeWidth="3"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="15.915"
+                  fill="none"
+                  stroke="#A971E0"
+                  strokeWidth="3"
+                  strokeDasharray="25 75"
+                  strokeDashoffset="25"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="15.915"
+                  fill="none"
+                  stroke="#3CA9B0"
+                  strokeWidth="3"
+                  strokeDasharray="15 85"
+                  strokeDashoffset="50"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="15.915"
+                  fill="none"
+                  stroke="#F4B942"
+                  strokeWidth="3"
+                  strokeDasharray="10 90"
+                  strokeDashoffset="65"
+                />
+              </svg>
+              <p className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-gray-800">
+                ${takeHome.toFixed(2)}
               </p>
             </div>
 
-            <div className="mt-4">
-              <p className="font-semibold text-gray-800">Basic Salary:</p>
-              <p className="text-gray-600 text-lg">$1140.00</p>
-            </div>
-
-            <div className="flex flex-col items-center justify-center mt-4">
-              <div className="bg-[#e0f7e7] border border-[#b2ebf2] rounded-lg p-4 w-full text-center shadow">
-                <p className="font-semibold text-lg text-gray-800">
-                  Take Home:
+            <div className="text-left">
+              <div className="text-sm text-gray-700">
+                <p>
+                  <span className="font-semibold">Basic Salary:</span> $
+                  {basicSalary.toFixed(2)}
                 </p>
-                <p className="text-2xl font-bold text-gray-700">$6140.00</p>
+                <p className="font-semibold text-green-600 text-lg mt-2">
+                  Take Home: ${takeHome.toFixed(2)}
+                </p>
               </div>
+
+              <div className="flex justify-between text-sm text-gray-600 mt-4">
+                <div className="flex flex-col items-center">
+                  <p className="font-semibold text-gray-800">Productivity:</p>
+                  <p>{productivity} Hrs</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <p className="font-semibold text-gray-800">Gross:</p>
+                  <p>${gross.toFixed(2)}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => console.log("Download Payslip")}
+                className="bg-[#007b5e] text-white px-4 py-2 rounded-lg hover:bg-[#124d3f] mt-4 w-full text-sm"
+              >
+                Download Payslip
+              </button>
             </div>
-
-            <div className="flex justify-between mt-6">
-              <div className="flex flex-col items-center w-1/2">
-                <p className="font-semibold text-gray-800">Productivity:</p>
-                <p className="text-gray-600 text-lg">40.45 Hours</p>
-              </div>
-
-              <div className="flex flex-col items-center w-1/2">
-                <p className="font-semibold text-gray-800">Gross:</p>
-                <p className="text-gray-600 text-lg">$ 6840.00</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => console.log("Download Payslip")}
-              className="bg-[#007b5e] text-white px-4 py-2 rounded-lg hover:bg-[#124d3f] mt-6 w-full"
-            >
-              Download Payslip
-            </button>
           </div>
         </div>
       )}
