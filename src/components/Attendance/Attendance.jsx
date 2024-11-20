@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaClipboardCheck, FaCoffee, FaClock } from "react-icons/fa";
+import { FaCoffee, FaClock } from "react-icons/fa";
 import { LuRefreshCw } from "react-icons/lu";
 import { TbFingerprintScan } from "react-icons/tb";
 

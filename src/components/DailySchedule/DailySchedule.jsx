@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaCalendarAlt, FaLock, FaCopy, FaPlus } from "react-icons/fa";
+import { FaLock, FaCopy, FaPlus } from "react-icons/fa";
 import ScheduleItem from "./ScheduleItem";
 import ScheduleModal from "./ScheduleModal";
 import DateNavigator from "./DateNavigator";

@@ -1,4 +1,3 @@
-// src/AuthContext.js
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
 

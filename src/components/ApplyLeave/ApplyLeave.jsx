@@ -3,7 +3,6 @@ import ApplicationItem from "./ApplicationItem";
 import Popup from "./Popup";
 import { applicationData } from "./data";
 import { IoMdOpen } from "react-icons/io";
-import { FaPaperclip } from "react-icons/fa";
 
 const ApplyLeave = () => {
   const [showPopup, setShowPopup] = useState(false);

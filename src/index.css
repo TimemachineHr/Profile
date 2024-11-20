@@ -9,3 +9,6 @@
   stroke: #ccc;
   stroke-width: 1.5px;
 }
+select {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+}

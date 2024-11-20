@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
+import NewEmployee from "./pages/NewEmployee";
+import Leave from "./pages/Leave/Leave";
+import LeaveList from "./pages/Leave/LeaveList";
+import LeaveSettings from "./pages/Leave/LeaveSettings";
+import LeaveReport from "./pages/Leave/LeaveReport";
+import Expense from "./pages/Expense/Expense";
+import ExpenseList from "./pages/Expense/ExpenseList";
+import ExpenseReport from "./pages/Expense/ExpenseReport";
+import ExpenseSettings from "./pages/Expense/ExpenseSettings";
+import Communication from "./pages/Communication/Communication";
+import CommunicationSettings from "./pages/Communication/CommunicationSettings";
+import Submission from "./pages/Communication/Submission";
+import List from "./pages/List";
 import Chart from "./pages/Chart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -9,7 +22,6 @@ import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   const [token, setToken] = useState(null);
-  const location = useLocation();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -19,8 +31,30 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/list" element={<List />} />
       <Route path="/login" element={<Login setToken={setToken} />} />
       <Route path="/register" element={<Register setToken={setToken} />} />
+      <Route path="/newemployee" element={<NewEmployee />} />
+
+      <Route path="/leave" element={<Leave />} />
+      <Route path="/leavelist" element={<LeaveList />} />
+      <Route path="/leavereport" element={<LeaveReport />} />
+      <Route path="/leavesettings" element={<LeaveSettings />} />
+
+      <Route path="/expense" element={<Expense />} />
+      <Route path="/expenselist" element={<ExpenseList />} />
+      <Route path="/expensereport" element={<ExpenseReport />} />
+      <Route path="/expensesettings" element={<ExpenseSettings />} />
+
+      <Route path="/profile" element={<Profile />} />
+
+      <Route path="/communication" element={<Communication />} />
+      <Route
+        path="/communicationsettings"
+        element={<CommunicationSettings />}
+      />
+      <Route path="/submission" element={<Submission />} />
+
       <Route
         path="/profile"
         element={<PrivateRoute token={token} element={<Profile />} />}
