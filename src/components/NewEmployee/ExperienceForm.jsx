@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { PiUploadSimpleBold } from "react-icons/pi";
+
 const ExperienceForm = ({ data, setData }) => {
   const defaultExperienceEntry = {
     location: "",

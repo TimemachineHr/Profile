@@ -71,16 +71,17 @@ const ExpenseSettings = () => {
                 Expense Approver
               </label>
               <div className="space-y-2 space-x-3">
-                <select className="p-2 border rounded-md w-38">
-                  <option value="">Approver Name</option>
-                  <option value="manager">Manager</option>
-                  <option value="hr">HR</option>
-                </select>
                 <select className="p-2 border rounded-md w-36">
                   <option value="">Business Unit</option>
                   <option value="unit1">Unit 1</option>
                   <option value="unit2">Unit 2</option>
                 </select>
+                <select className="p-2 border rounded-md w-38">
+                  <option value="">Approver Name</option>
+                  <option value="manager">Manager</option>
+                  <option value="hr">HR</option>
+                </select>
+
                 <button className="bg-[#1A72A7] text-white px-4 py-2 rounded-md">
                   Assign Approver
                 </button>

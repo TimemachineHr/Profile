@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaPlus, FaTimes } from "react-icons/fa";
 
 const CommunicationHeader = ({ onAddCommunication }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const location = useLocation(); // Get current location
 
   const handleOnboardingClick = () => {
     setShowPopup(true);
@@ -18,24 +19,38 @@ const CommunicationHeader = ({ onAddCommunication }) => {
     setShowPopup(false);
   };
 
+  const isActive = (path) =>
+    location.pathname === path
+      ? "bg-gray-100 text-blue-600"
+      : "hover:bg-gray-100 hover:text-blue-600";
+
   return (
     <header className="flex justify-between items-center bg-white text-black py-2 px-6 shadow-md">
       <div className="flex space-x-4">
         <Link
           to="/communication"
-          className="px-4 py-2 font-semibold rounded-lg hover:bg-gray-100 hover:text-blue-600 transition duration-200"
+          className={`px-4 py-2 font-semibold rounded-lg transition duration-200 ${isActive(
+            "/communication"
+          )}`}
         >
           Home
         </Link>
         <Link
           to="/submission"
-          className="px-4 py-2 font-semibold rounded-lg hover:bg-gray-100 hover:text-blue-600 transition duration-200"
+          className={`px-4 py-2 font-semibold rounded-lg relative transition duration-200 ${isActive(
+            "/submission"
+          )}`}
         >
           Submission
+          <span className="ml-2 bg-blue-600 text-white text-xs font-bold rounded-full px-2 py-1">
+            5
+          </span>
         </Link>
         <Link
           to="/communicationsettings"
-          className="px-4 py-2 font-semibold rounded-lg hover:bg-gray-100 hover:text-blue-600 transition duration-200"
+          className={`px-4 py-2 font-semibold rounded-lg transition duration-200 ${isActive(
+            "/communicationsettings"
+          )}`}
         >
           Settings
         </Link>

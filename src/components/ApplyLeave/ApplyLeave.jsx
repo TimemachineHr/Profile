@@ -22,7 +22,7 @@ const ApplyLeave = () => {
     <>
       <div className="rounded-2xl bg-white shadow-lg p-4 flex flex-col h-64 w-full">
         <h3 className="font-bold text-lg text-gray-800 mb-4 flex items-center">
-          Previous Applications
+          Applications
         </h3>
 
         <div
