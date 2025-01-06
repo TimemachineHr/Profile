@@ -48,7 +48,7 @@ const LeaveTable = () => {
       code: "L000004",
       type: "Annual",
       daysHours: "3 Days",
-      status: "Rejected",
+      status: "Declined",
     },
     {
       slno: 5,
@@ -244,7 +244,7 @@ const LeaveTable = () => {
                     key={index}
                     className="hover:bg-gray-50 text-center even:bg-gray-200"
                   >
-                    <td className="border border-gray-300 p-2 py-3">
+                    <td className="border border-l border-gray-300 p-2 py-3">
                       {row.slno}
                     </td>
                     <td className="border border-gray-300 p-2">
@@ -266,8 +266,8 @@ const LeaveTable = () => {
                         className={`relative  text-white px-1 text-sm rounded-md ${
                           row.status === "Approved"
                             ? "bg-green-600"
-                            : row.status === "Rejected"
-                            ? "bg-red-600"
+                            : row.status === "Declined"
+                            ? "bg-red-400"
                             : "bg-yellow-600"
                         }`}
                       >
@@ -276,25 +276,25 @@ const LeaveTable = () => {
                     </td>
                     <td className="border border-gray-300 p-2 flex justify-center space-x-2">
                       {row.status === "Approved" && (
-                        <button className="px-1 py-1 text-gray-800  rounded">
+                        <button className="p-2 text-green-800  rounded">
                           <FaSearch />
                         </button>
                       )}
 
                       {row.status === "Pending" && (
                         <>
-                          <button className="px-1 py-1 text-gray-800  rounded">
+                          <button className="p-2 text-green-800  rounded">
                             <FaSearch />
                           </button>
-                          <button className="px-1 py-1 text-gray-800  text-md rounded">
+                          <button className="p-2 text-red-800  text-md rounded">
                             <ImCross />
                           </button>
                         </>
                       )}
 
-                      {row.status === "Rejected" && (
+                      {row.status === "Declined" && (
                         <>
-                          <button className="px-1 py-1 text-gray-800  rounded">
+                          <button className="px-1 py-1 text-green-800  rounded">
                             <FaSearch />
                           </button>
                           <button className="px-1 py-1 text-gray-800  rounded">
@@ -364,12 +364,12 @@ const LeaveTable = () => {
                     <td className="border border-gray-300 p-2">
                       {row.daysHours}
                     </td>
-                    <td className="border border-gray-300 p-2">
+                    <td className="border-y border-gray-300 p-2">
                       <span
                         className={`relative  text-white px-1 text-sm rounded-md ${
                           row.status === "Approved"
                             ? "bg-green-600"
-                            : row.status === "Rejected"
+                            : row.status === "Declined"
                             ? "bg-red-600"
                             : "bg-yellow-600"
                         }`}
@@ -377,11 +377,11 @@ const LeaveTable = () => {
                         {row.status}
                       </span>
                     </td>
-                    <td className="border border-gray-300 p-2 flex justify-center space-x-2">
-                      <button className="px-1 py-1 text-gray-800 rounded">
+                    <td className="border-r border-l border-gray-300 p-5 flex justify-center space-x-2">
+                      <button className="px-1 py-1 text-green-800 rounded">
                         <FaSearch />
                       </button>
-                      <button className="px-1 py-1 text-gray-800  rounded">
+                      <button className="px-1 py-1 text-red-800  rounded">
                         <ImCross />
                       </button>
                     </td>

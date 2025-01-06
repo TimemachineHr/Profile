@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaRegEdit } from "react-icons/fa";
 import ExpenseHeader from "../../components/Main/ExpenseHeader";
 
 const ExpenseSettings = () => {
@@ -8,6 +9,34 @@ const ExpenseSettings = () => {
   const [multipleCurrencySelected, setMultipleCurrencySelected] =
     useState(false);
   const [selectedType, setSelectedType] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [exchangeRates, setExchangeRates] = useState([
+    { currency: "MYR", value: 3.55 },
+    { currency: "INR", value: 61.87 },
+    { currency: "AUD", value: 1.14 },
+    { currency: "Peso", value: 41.77 },
+    { currency: "IDR", value: 11708.51 },
+  ]);
+
+  const handleRateChange = (index, field, value) => {
+    const updatedRates = [...exchangeRates];
+    updatedRates[index][field] = value;
+    setExchangeRates(updatedRates);
+  };
+
+  const handleAddRate = () => {
+    setExchangeRates([...exchangeRates, { currency: "", value: "" }]);
+  };
+
+  const handleRemoveRate = (index) => {
+    const updatedRates = exchangeRates.filter((_, i) => i !== index);
+    setExchangeRates(updatedRates);
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    setIsEditing(false);
+  };
 
   const handleDropdownChange = (e) => {
     setSelectedType(e.target.value);
@@ -43,8 +72,8 @@ const ExpenseSettings = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Reporting manager can{" "}
                     <select className="p-2 border rounded-md w-34">
-                      <option value="payroll">payroll</option>
-                      <option value="Ad-hoc">Ad-hoc</option>
+                      <option value="payroll">View </option>
+                      <option value="Ad-hoc">Not view </option>
                     </select>{" "}
                     the Expense claim
                   </label>
@@ -166,18 +195,93 @@ const ExpenseSettings = () => {
                         </select>
 
                         {selectedType === "adminExchangeRate" && (
-                          <div className="mt-4 p-3 border rounded-md bg-gray-50">
-                            <p className="text-sm font-medium text-gray-800">
-                              Admin Exchange Rate
-                            </p>
-                            <ul className="list-disc ml-6 mt-2 text-sm font-light text-gray-700">
-                              <li>1 SGD = 3.55 MYR</li>
-                              <li>1 SGD = 61.87 INR</li>
-                              <li>1 SGD = 1.14 AUD</li>
-                              <li>1 SGD = 41.77 Peso</li>
-                              <li>1 SGD = 11708.51 IDR</li>
-                              <li>All other currencies to be advised</li>
-                            </ul>
+                          <div className="mt-4 p-3 border rounded-md bg-gray-50 relative">
+                            <div className="flex justify-between items-center">
+                              <p className="text-sm font-medium text-gray-800">
+                                Admin Exchange Rate
+                              </p>
+                              <button
+                                className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                                onClick={() => setIsEditing(!isEditing)}
+                              >
+                                <FaRegEdit />
+                              </button>
+                            </div>
+                            {!isEditing ? (
+                              <ul className="list-disc ml-6 mt-2 text-sm font-light text-gray-700">
+                                {exchangeRates.map((rate, index) => (
+                                  <li key={index}>
+                                    1 SGD = {rate.value} {rate.currency}
+                                  </li>
+                                ))}
+                                <li>All other currencies to be advised</li>
+                              </ul>
+                            ) : (
+                              <form onSubmit={handleSave} className="mt-2">
+                                {exchangeRates.map((rate, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-2 mb-2"
+                                  >
+                                    <input
+                                      type="text"
+                                      value={rate.currency}
+                                      onChange={(e) =>
+                                        handleRateChange(
+                                          index,
+                                          "currency",
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Currency (e.g., SGD)"
+                                      className="border rounded-md p-1 text-sm w-32"
+                                    />
+                                    <input
+                                      type="number"
+                                      value={rate.value}
+                                      onChange={(e) =>
+                                        handleRateChange(
+                                          index,
+                                          "value",
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Exchange Rate"
+                                      className="border rounded-md p-1 text-sm w-32"
+                                    />
+                                    <button
+                                      type="button"
+                                      className="text-red-500 hover:text-red-700"
+                                      onClick={() => handleRemoveRate(index)}
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  type="button"
+                                  className="text-blue-500 hover:underline text-sm"
+                                  onClick={handleAddRate}
+                                >
+                                  Add New Currency
+                                </button>
+                                <div className="mt-4">
+                                  <button
+                                    type="submit"
+                                    className="px-3 py-1 bg-green-500 text-white text-sm rounded-md"
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsEditing(false)}
+                                    className="px-3 py-1 bg-gray-300 text-sm rounded-md ml-2"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            )}
                           </div>
                         )}
                       </div>

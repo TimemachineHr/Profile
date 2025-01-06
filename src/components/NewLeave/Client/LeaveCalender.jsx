@@ -126,7 +126,7 @@ const LeaveCalender = () => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1">
         {/* Days of the week */}
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div key={day} className="text-center font-semibold text-gray-600">
@@ -143,9 +143,9 @@ const LeaveCalender = () => {
             key={`date-${index + 1}`}
             className="h-16 p-2 border rounded-lg bg-gray-50 shadow-sm flex flex-col items-center justify-start"
           >
-            <div className="text-sm font-bold">{index + 1}</div>
+            <div className="text-sm font-bold text-gray-600">{index + 1}</div>
             <div className="mt-1 flex -space-x-2">
-              {leaveData[index + 1]?.map((person) => (
+              {leaveData[index + 1]?.slice(0, 2).map((person) => (
                 <img
                   key={person.id}
                   src={person.profileImage}
@@ -156,6 +156,11 @@ const LeaveCalender = () => {
                   }}
                 />
               ))}
+              {leaveData[index + 1]?.length > 2 && (
+                <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600 border-2 border-white">
+                  +{leaveData[index + 1].length - 2}
+                </span>
+              )}
             </div>
           </div>
         ))}

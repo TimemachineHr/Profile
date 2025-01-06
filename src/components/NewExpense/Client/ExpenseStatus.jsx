@@ -19,10 +19,18 @@ const ExpenseStatus = () => {
       <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-green-200">
-            <th className="border border-gray-300  px-4 py-2">Code</th>
-            <th className="border border-gray-300 px-4 py-2">Claimable</th>
-            <th className="border border-gray-300 px-4 py-2">Claimed/Used</th>
-            <th className="border border-gray-300 px-4 py-2">Balance</th>
+            <th className="border  text-gray-700 border-gray-300  px-4 py-2">
+              Code
+            </th>
+            <th className="border text-gray-700 border-gray-300 px-4 py-2">
+              Claimable
+            </th>
+            <th className="border text-gray-700 border-gray-300 px-4 py-2">
+              Claimed/Used
+            </th>
+            <th className="border text-gray-700 border-gray-300 px-4 py-2">
+              Balance
+            </th>
           </tr>
         </thead>
         <tbody>

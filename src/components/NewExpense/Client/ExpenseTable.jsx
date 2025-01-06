@@ -38,7 +38,7 @@ const ExpenseTable = () => {
       subject: "Meals",
       type: "Travel Allowance",
       amount: "$100",
-      status: "Rejected",
+      status: "Declined",
       date: "2024-12-03",
       docs: "#",
       action: ["cross"],
@@ -154,13 +154,13 @@ const ExpenseTable = () => {
                   className={`relative  text-white px-1 text-sm rounded-md ${
                     row.status === "Approved"
                       ? "bg-green-600"
-                      : row.status === "Rejected"
+                      : row.status === "Declined"
                       ? "bg-red-600"
                       : "bg-yellow-600"
                   }`}
                 >
                   {row.status}
-                  {row.status === "Rejected" && (
+                  {row.status === "Declined" && (
                     <IoChatboxEllipses className="absolute top-0 right-0 text-black text-md translate-x-1/2 -translate-y-1/2" />
                   )}
                 </span>

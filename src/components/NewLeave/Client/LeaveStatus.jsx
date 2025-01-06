@@ -21,17 +21,17 @@ const LeaveStatus = () => {
       </div>
       <table className="border-collapse border border-gray-300 rounded-lg overflow-hidden">
         <thead>
-          <tr className="bg-blue-300">
-            <th className="border border-gray-300  py-2 whitespace-nowrap">
+          <tr className="bg-blue-200">
+            <th className="border border-gray-300  text-gray-700  py-2 whitespace-nowrap">
               Leave Type
             </th>
-            <th className="border border-gray-300 px-1 py-2 whitespace-nowrap">
+            <th className="border border-gray-300  text-gray-700 px-1 py-2 whitespace-nowrap">
               Eligible
             </th>
-            <th className="border border-gray-300 px-1 py-2 whitespace-nowrap">
+            <th className="border border-gray-300 text-gray-700  px-1 py-2 whitespace-nowrap">
               Taken/Encashed
             </th>
-            <th className="border border-gray-300 px-1 py-2 whitespace-nowrap">
+            <th className="border border-gray-300 text-gray-700  px-1 py-2 whitespace-nowrap">
               Available
             </th>
           </tr>
@@ -43,16 +43,15 @@ const LeaveStatus = () => {
                 {row.leaveType}
               </td>
               <td className="border text-center border-gray-300 px-4 py-2 whitespace-nowrap">
-                <span className=" px-1 rounded-md">{row.eligible}</span>
+                <span className="px-1 rounded-md">{row.eligible}</span>
               </td>
               <td className="border border-gray-300 px-4 py-2 whitespace-nowrap">
-                <div className="relative w-full h-4 bg-gray-200 rounded-lg overflow-hidden">
+                <div className="relative w-full h-4 bg-gray-200 rounded-sm overflow-hidden">
                   <div
                     className="absolute top-0 left-0 h-4 rounded-lg"
                     style={{
                       width: `${row.percentTaken}%`,
-                      background:
-                        "linear-gradient(to right, #A8E6A1, #FFF3B0, #F7B2B0)", // Softer gradient
+                      background: "#3b82f6",
                     }}
                   ></div>
                   <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-800">
@@ -60,7 +59,6 @@ const LeaveStatus = () => {
                   </span>
                 </div>
               </td>
-
               <td className="border text-center border-gray-300 px-4 py-2 whitespace-nowrap">
                 <span className="px-1 rounded-md">{row.available}</span>
               </td>

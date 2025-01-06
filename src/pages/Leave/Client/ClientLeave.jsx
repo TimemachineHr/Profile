@@ -55,7 +55,7 @@ const ClientLeave = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg w-3/4 md:w-1/2">
-            <div className="bg-blue-500 text-white px-4 py-4 flex items-center rounded-md mb-2 justify-between">
+            <div className="bg-blue-400 text-white px-4 py-4 flex items-center rounded-md mb-2 justify-between">
               {/* Header Text */}
               <h2 className="text-lg font-semibold">Apply Leave</h2>
 
