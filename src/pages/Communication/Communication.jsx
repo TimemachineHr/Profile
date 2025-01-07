@@ -116,6 +116,11 @@ const Communication = () => {
                     <div
                       key={comm.id}
                       className="w-28 h-28 p-4 border rounded-xl shadow-md relative bg-white hover:cursor-pointer"
+                      onClick={() => {
+                        if (comm.type === "Form") {
+                          window.location.href = `/form/${comm.id}`;
+                        }
+                      }}
                     >
                       <div
                         onClick={() => {
@@ -163,61 +168,6 @@ const Communication = () => {
               </div>
             </div>
 
-            {/* <div className="p-4">
-              <h3 className="text-xl font-semibold mb-4">Letters</h3>
-              <div className="flex gap-6 overflow-x-auto">
-                {filteredCommunications
-                  .filter((comm) => comm.type === "Letter")
-                  .map((comm) => (
-                    <div
-                      key={comm.id}
-                      className="w-28 h-28 p-4 border rounded-xl shadow-md relative bg-white hover:cursor-pointer"
-                    >
-                      <div
-                        onClick={() => {
-                          if (comm.status === "Draft") {
-                            handlePublishClick(comm);
-                          } else {
-                            handleUpdateStatus(comm.id, "Published");
-                          }
-                        }}
-                        className={`absolute bottom-4 right-0 px-3 py-1 text-xs rounded text-white ${
-                          comm.status === "Draft"
-                            ? "bg-yellow-500"
-                            : "bg-green-500"
-                        }`}
-                      >
-                        {comm.status}
-                      </div>
-
-                      {comm.status === "Draft" && editingId === comm.id ? (
-                        <input
-                          type="text"
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          onBlur={() => handleNameChange(comm.id)}
-                          className="w-full text-md font-semibold border-b focus:outline-none"
-                          autoFocus
-                        />
-                      ) : (
-                        <h3
-                          className={`text-sm font-semibold ${
-                            comm.status === "Draft" ? "hover:underline" : ""
-                          }`}
-                          onClick={() => {
-                            if (comm.status === "Draft") {
-                              setEditingId(comm.id);
-                              setEditingName(comm.name);
-                            }
-                          }}
-                        >
-                          {comm.name}
-                        </h3>
-                      )}
-                    </div>
-                  ))}
-              </div>
-            </div> */}
             <LetterTemplates filteredCommunications={filteredCommunications} />
           </div>
         </div>

@@ -1,69 +1,76 @@
-// import React from "react";
-// import * as FaIcons from "react-icons/fa";
-
-// const ScheduleItem = ({ item, index, toggleComplete }) => {
-//   const IconComponent = FaIcons[item.icon] || FaIcons.FaTasks;
-
-//   return (
-//     <li
-//       className={`flex items-center justify-between p-3 rounded-lg border ${
-//         item.completed ? "line-through text-gray-400 bg-gray-100" : ""
-//       }`}
-//     >
-//       <div className="flex items-center space-x-3">
-//         <IconComponent style={{ color: item.iconColor, fontSize: "20px" }} />
-//         <span>{item.time}</span>
-//         <span>{item.description}</span>
-//       </div>
-//       <button
-//         onClick={() => toggleComplete(index)}
-//         className="text-sm text-[#007b5e] hover:underline"
-//       >
-//         {item.completed ? "Undo" : "Complete"}
-//       </button>
-//     </li>
-//   );
-// };
-
-// export default ScheduleItem;
 import React from "react";
-import { FaUndo } from "react-icons/fa";
 import * as FaIcons from "react-icons/fa";
+import { TiTick } from "react-icons/ti";
 
-const ScheduleItem = ({ item, index, toggleComplete }) => {
+const ScheduleItem = ({ item, index, toggleComplete, isLast }) => {
   const IconComponent = FaIcons[item.icon] || FaIcons.FaTasks; // Fallback to FaTasks
 
   return (
-    <li
-      className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-        item.completed
-          ? "line-through text-gray-400 bg-gray-100"
-          : "text-gray-800 bg-white"
-      } border-gray-200 hover:shadow-md`}
-    >
-      <div className="flex items-center space-x-3">
-        <span>
-          <IconComponent style={{ color: item.iconColor, fontSize: "20px" }} />
-        </span>
-        <div>
-          <span className="block font-semibold">{item.time}</span>
-          <span className="block text-sm text-gray-500">
-            {item.description}
-          </span>
+    <div className="flex items-start space-x-4 relative">
+      {/* Timeline Indicator */}
+      <div className="flex flex-col items-center">
+        {/* Dotted Line */}
+        {!isLast && (
+          <div
+            style={{
+              borderColor: item.completed ? item.iconColor || "#ccc" : "#ccc",
+            }}
+            className="absolute top-8 left-4 w-1 h-full border-l-2 border-dotted"
+          ></div>
+        )}
+
+        {/* Circular Icon */}
+        <div
+          className="w-9 h-9 flex items-center justify-center rounded-full z-10"
+          style={{ backgroundColor: item.iconColor || "#ccc" }} // Default to gray if iconColor is not provided
+        >
+          <IconComponent style={{ color: "white", fontSize: "20px" }} />
         </div>
       </div>
-      <button
-        onClick={() => toggleComplete(index)}
-        aria-label={item.completed ? "Mark as incomplete" : "Mark as complete"}
-        className={`text-sm font-medium ${
-          item.completed
-            ? "text-red-500 hover:text-red-600"
-            : "text-green-500 hover:text-green-600"
-        }`}
-      >
-        {item.completed ? <FaUndo /> : "Complete"}
-      </button>
-    </li>
+
+      {/* Task Content */}
+      <div className="flex flex-col space-y-1">
+        <span className="text-gray-600 text-sm">{item.time}</span>
+        <span
+          className={`font-medium text-gray-800 ${
+            item.completed ? "line-through text-gray-500" : ""
+          }`}
+        >
+          {item.description}
+        </span>
+        {item.details && (
+          <span
+            className={`text-xs ${
+              item.completed ? "line-through text-gray-400" : "text-gray-500"
+            }`}
+          >
+            {item.details}
+          </span>
+        )}
+      </div>
+
+      {/* Circular Checkbox with Tick Mark */}
+      <div className="absolute right-2 ">
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={item.completed}
+            onChange={() => toggleComplete(index)}
+            className="appearance-none w-5 h-5 border-2 rounded-full focus:outline-none transition duration-150 relative"
+            style={{
+              borderColor: item.completed ? item.iconColor : "#d1d5db", // Dynamic border color or default gray
+            }}
+          />
+          <span
+            className={`absolute top-1/2 left-0.5 transform -translate-x-1/2 -translate-y-1/2 text-sm font-semibold ${
+              item.completed ? "block text-gray-600" : "hidden"
+            }`}
+          >
+            <TiTick className="text-lg" />
+          </span>
+        </label>
+      </div>
+    </div>
   );
 };
 

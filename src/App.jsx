@@ -15,6 +15,7 @@ import ExpenseReport from "./pages/Expense/ExpenseReport";
 import ExpenseSettings from "./pages/Expense/ExpenseSettings";
 import Communication from "./pages/Communication/Communication";
 import LetterPage from "./pages/Communication/LetterPage";
+import FormEditor from "./pages/Communication/FormEditor";
 import CommunicationSettings from "./pages/Communication/CommunicationSettings";
 import Submission from "./pages/Communication/Submission";
 import IncomeTax from "./pages/IR8A/IncomeTax";
@@ -64,6 +65,7 @@ const App = () => {
 
       <Route path="/communication" element={<Communication />} />
       <Route path="/letter/:templateId" element={<LetterPage />} />
+      <Route path="/form/:formId" element={<FormEditor />} />
       <Route
         path="/communicationsettings"
         element={<CommunicationSettings />}

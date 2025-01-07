@@ -64,12 +64,13 @@ const DailySchedule = () => {
         .toISOString()
         .split("T")[0];
 
-      // Filter out the tasks from the current date
+      // Copy all tasks (including completed ones) but set `completed` to false
       const newSchedule = schedule
         .filter((item) => item.date === currentDate.toISOString().split("T")[0])
         .map((item) => ({
           ...item,
           date: selectedDateString, // Use selected date (not altered date)
+          completed: false, // Set completed to false for copied tasks
         }));
 
       // Add the copied tasks to the schedule (keeping original tasks intact)
@@ -188,34 +189,36 @@ const DailySchedule = () => {
       {/* Calendar Modal */}
       {isCalendarOpen && (
         <div className="absolute inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-3  relative">
+          <div className="bg-white rounded-lg shadow-lg p-4 max-w-10w-full relative">
             {/* Title and Close Button on the Same Line */}
             <div className="flex justify-between mb-3 items-center">
               <h3 className="text-xl font-semibold text-gray-800">
-                Copy Tasks to Selected Date
+                Select Date
               </h3>
               <button
                 onClick={() => setIsCalendarOpen(false)}
                 className="text-gray-600 hover:text-gray-800 focus:outline-none"
               >
-                <ImCross className="text-xl" />
+                <ImCross />
               </button>
             </div>
 
             {/* Calendar */}
-            <DatePicker
-              selected={selectedDateForCopy}
-              onChange={handleDateSelect}
-              inline
-              className="border border-gray-300 rounded-md  p-2 w-full"
-            />
+            <div className="w-full overflow-hidden">
+              <DatePicker
+                selected={selectedDateForCopy}
+                onChange={handleDateSelect}
+                inline
+                className="border border-gray-300 rounded-md p-0 w-full"
+              />
+            </div>
 
             {/* Copy Tasks Button */}
             <button
               onClick={copyScheduleToDate}
-              className="w-full py-2 bg-[#007b5e] text-white font-semibold rounded-lg hover:bg-green-900 transition-all"
+              className="w-full py-2 bg-[#007b5e] text-white font-semibold rounded-lg hover:bg-green-900 transition-all mt-3"
             >
-              Copy Tasks
+              Copy Plans
             </button>
           </div>
         </div>
