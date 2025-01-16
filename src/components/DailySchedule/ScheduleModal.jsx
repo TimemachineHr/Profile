@@ -52,11 +52,14 @@ const ScheduleModal = ({
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-96 relative">
-        <h2 className="text-lg font-semibold mb-4">Add New Plan</h2>
+      <div className="bg-white p-3 rounded-xl shadow-lg w-96 relative">
+        <h2 className="text-lg font-semibold mb-4">
+          {newDescription ? newDescription : "Add New Plan"}
+        </h2>
+
         <button
           onClick={closeModal}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
         >
           <ImCross />
         </button>
@@ -64,11 +67,13 @@ const ScheduleModal = ({
         {/* Time Input with Icon Picker */}
         <div className="flex items-center mb-3">
           <div
-            className="cursor-pointer text-2xl mr-3"
+            // className="cursor-pointer rounded p-2 bg-red-300 text-2xl mr-3"
+            className="cursor-pointer rounded-full p-2 text-2xl mr-3"
+            style={{ backgroundColor: iconColor }}
             onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
           >
             {React.createElement(FaIcons[selectedIcon], {
-              style: { fontSize: "24px", color: iconColor },
+              style: { fontSize: "24px", color: "white" },
             })}
           </div>
           <input
