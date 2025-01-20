@@ -3,7 +3,6 @@ import { FaLock, FaCopy, FaPlus } from "react-icons/fa";
 import ScheduleItem from "./ScheduleItem";
 import ScheduleModal from "./ScheduleModal";
 import DateNavigator from "./DateNavigator";
-import { scheduleData } from "./ScheduleData"; // Import your modified scheduleData
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ImCross } from "react-icons/im";
@@ -11,7 +10,7 @@ import { BiExpandAlt } from "react-icons/bi";
 import Confetti from "react-confetti";
 
 const DailySchedule = ({ triggerConfetti }) => {
-  const [schedule, setSchedule] = useState(scheduleData);
+  const [schedule, setSchedule] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTime, setNewTime] = useState("");
@@ -23,6 +22,21 @@ const DailySchedule = ({ triggerConfetti }) => {
   const [selectedDateForCopy, setSelectedDateForCopy] = useState(null);
   const [isAllTasksOpen, setIsAllTasksOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const response = await fetch(
+          "https://tasks-backend-tms.vercel.app/api/plans"
+        );
+        const data = await response.json();
+        setSchedule(data);
+      } catch (error) {
+        console.error("Error fetching schedule:", error);
+      }
+    };
+    fetchSchedule();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,7 +60,6 @@ const DailySchedule = ({ triggerConfetti }) => {
   }, [schedule]);
 
   useEffect(() => {
-    // Check if all tasks for the current day are completed
     const allCompleted =
       filteredSchedule.length > 0 &&
       filteredSchedule.every((item) => item.completed);
@@ -56,23 +69,53 @@ const DailySchedule = ({ triggerConfetti }) => {
     }
   }, [schedule]);
 
-  const toggleComplete = (index) => {
+  const toggleComplete = async (id) => {
+    const taskToUpdate = schedule.find((item) => item._id === id);
+
+    if (!taskToUpdate) {
+      console.error("Task not found");
+      return;
+    }
+
+    const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+
     setSchedule((prevSchedule) =>
-      prevSchedule.map((item, i) =>
-        i === index ? { ...item, completed: !item.completed } : item
-      )
+      prevSchedule.map((item) => (item._id === id ? updatedTask : item))
     );
+
+    try {
+      const response = await fetch(
+        `https://tasks-backend-tms.vercel.app/api/plans/${id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedTask),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server error response:", errorData);
+        throw new Error("Failed to update task on the server");
+      }
+    } catch (error) {
+      console.error("Error updating task:", error);
+
+      setSchedule((prevSchedule) =>
+        prevSchedule.map((item) =>
+          item._id === id
+            ? { ...item, completed: taskToUpdate.completed }
+            : item
+        )
+      );
+    }
   };
 
-  const handleCopy = () => {
-    setIsCalendarOpen(true); // Open calendar modal on copy
-  };
+  const handleCopy = () => setIsCalendarOpen(true);
 
-  const handleDateSelect = (date) => {
-    setSelectedDateForCopy(date); // Set the selected date for copying tasks
-  };
+  const handleDateSelect = (date) => setSelectedDateForCopy(date);
 
-  const copyScheduleToDate = () => {
+  const copyScheduleToDate = async () => {
     if (selectedDateForCopy) {
       const selectedDateString = selectedDateForCopy
         .toISOString()
@@ -87,6 +130,22 @@ const DailySchedule = ({ triggerConfetti }) => {
         }));
 
       setSchedule((prevSchedule) => [...prevSchedule, ...newSchedule]);
+
+      // Send new schedule to the API
+      try {
+        await Promise.all(
+          newSchedule.map((item) =>
+            fetch("https://tasks-backend-tms.vercel.app/api/plans", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(item),
+            })
+          )
+        );
+      } catch (error) {
+        console.error("Error copying tasks:", error);
+      }
+
       setIsCalendarOpen(false);
     }
   };
@@ -109,21 +168,32 @@ const DailySchedule = ({ triggerConfetti }) => {
     setReminderTime("");
   };
 
-  const handleAddPlan = () => {
+  const handleAddPlan = async () => {
     if (newTime && newDescription) {
-      setSchedule((prevSchedule) => [
-        ...prevSchedule,
-        {
-          time: newTime,
-          description: newDescription,
-          completed: false,
-          icon: selectedIcon,
-          iconColor,
-          reminder: reminderTime,
-          reminderTriggered: false,
-          date: currentDate.toISOString().split("T")[0],
-        },
-      ]);
+      const newTask = {
+        time: newTime,
+        description: newDescription,
+        completed: false,
+        icon: selectedIcon,
+        iconColor,
+        reminder: reminderTime,
+        reminderTriggered: false,
+        date: currentDate.toISOString().split("T")[0],
+      };
+
+      setSchedule((prevSchedule) => [...prevSchedule, newTask]);
+
+      // Save new task to the API
+      try {
+        await fetch("https://tasks-backend-tms.vercel.app/api/plans", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newTask),
+        });
+      } catch (error) {
+        console.error("Error adding task:", error);
+      }
+
       closeModal();
     }
   };
@@ -179,10 +249,11 @@ const DailySchedule = ({ triggerConfetti }) => {
           ) : (
             filteredSchedule.map((item, index) => (
               <ScheduleItem
-                key={index}
+                key={item._id}
                 item={item}
                 index={index}
                 toggleComplete={toggleComplete}
+                isLast={index === filteredSchedule.length - 1}
               />
             ))
           )}
@@ -198,20 +269,22 @@ const DailySchedule = ({ triggerConfetti }) => {
       </button>
 
       {isModalOpen && (
-        <ScheduleModal
-          closeModal={closeModal}
-          newTime={newTime}
-          setNewTime={setNewTime}
-          newDescription={newDescription}
-          setNewDescription={setNewDescription}
-          selectedIcon={selectedIcon}
-          setSelectedIcon={setSelectedIcon}
-          iconColor={iconColor}
-          setIconColor={setIconColor}
-          handleAddPlan={handleAddPlan}
-          reminderTime={reminderTime}
-          setReminderTime={setReminderTime}
-        />
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-90 flex justify-center items-center z-50">
+          <ScheduleModal
+            closeModal={closeModal}
+            newTime={newTime}
+            setNewTime={setNewTime}
+            newDescription={newDescription}
+            setNewDescription={setNewDescription}
+            selectedIcon={selectedIcon}
+            setSelectedIcon={setSelectedIcon}
+            iconColor={iconColor}
+            setIconColor={setIconColor}
+            handleAddPlan={handleAddPlan}
+            reminderTime={reminderTime}
+            setReminderTime={setReminderTime}
+          />
+        </div>
       )}
 
       {/* Calendar Modal */}
@@ -294,14 +367,22 @@ const DailySchedule = ({ triggerConfetti }) => {
               ) : (
                 filteredSchedule.map((item, index) => (
                   <ScheduleItem
-                    key={index}
+                    key={item._id}
                     item={item}
                     index={index}
                     toggleComplete={toggleComplete}
+                    isLast={index === filteredSchedule.length - 1}
                   />
                 ))
               )}
             </ul>
+            <button
+              onClick={openModal}
+              className="ml-auto px-2 py-1 bg-[#007b5e] text-white rounded-lg flex items-center space-x-1 hover:bg-[#124d3f]"
+            >
+              <FaPlus className="text-sm" />
+              <span>Add Plan</span>
+            </button>
           </div>
         </div>
       )}

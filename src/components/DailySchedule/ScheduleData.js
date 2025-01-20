@@ -5,7 +5,7 @@ export const scheduleData = [
     icon: "FaUsers", // Team icon
     completed: false,
     iconColor: "#007b5e",
-    date: "2025-01-16", // Add a date to each task
+    date: new Date().toISOString().split("T")[0],
   },
   {
     time: "10:00 AM - 12:00 PM",
@@ -13,7 +13,7 @@ export const scheduleData = [
     icon: "FaCode", // Coding icon
     completed: false,
     iconColor: "#3498db",
-    date: "2025-01-16", // Add a date to each task
+    date: new Date().toISOString().split("T")[0],
   },
   {
     time: "12:30 PM",
@@ -21,7 +21,7 @@ export const scheduleData = [
     icon: "FaUtensils", // Lunch icon
     completed: false,
     iconColor: "#f1c40f",
-    date: "2025-01-16", // Add a date to each task
+    date: new Date().toISOString().split("T")[0],
   },
   {
     time: "1:30 PM - 3:00 PM",
@@ -29,7 +29,7 @@ export const scheduleData = [
     icon: "FaLaptop", // Presentation icon
     completed: false,
     iconColor: "#2ecc71",
-    date: "2025-01-16", // Add a different date for variety
+    date: new Date().toISOString().split("T")[0],
   },
   {
     time: "3:30 PM",
@@ -37,7 +37,7 @@ export const scheduleData = [
     icon: "FaSync", // Sync icon
     completed: false,
     iconColor: "#e74c3c",
-    date: "2025-01-16", // Add a different date for variety
+    date: new Date().toISOString().split("T")[0],
   },
   {
     time: "5:00 PM",
@@ -45,7 +45,7 @@ export const scheduleData = [
     icon: "FaBug", // Bug icon
     completed: false,
     iconColor: "#9b59b6",
-    date: "2025-01-16", // Add a different date for variety
+    date: new Date().toISOString().split("T")[0],
   },
   {
     time: "6:30 PM",
@@ -53,6 +53,6 @@ export const scheduleData = [
     icon: "FaCalendarAlt", // Calendar icon
     completed: false,
     iconColor: "#f39c12",
-    date: "2025-01-16", // Add a different date for variety
+    date: new Date().toISOString().split("T")[0],
   },
 ];

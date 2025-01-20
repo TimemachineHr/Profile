@@ -2,7 +2,7 @@ import React from "react";
 import * as FaIcons from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 
-const ScheduleItem = ({ item, index, toggleComplete, isLast }) => {
+const ScheduleItem = ({ item, toggleComplete, isLast, index }) => {
   const IconComponent = FaIcons[item.icon] || FaIcons.FaTasks; // Fallback to FaTasks
 
   return (
@@ -55,12 +55,13 @@ const ScheduleItem = ({ item, index, toggleComplete, isLast }) => {
           <input
             type="checkbox"
             checked={item.completed}
-            onChange={() => toggleComplete(index)}
+            onChange={() => toggleComplete(item._id)} // Pass _id here
             className="appearance-none w-5 h-5 border-2 rounded-full focus:outline-none transition duration-150 relative"
             style={{
-              borderColor: item.completed ? item.iconColor : "#d1d5db", // Dynamic border color or default gray
+              borderColor: item.completed ? item.iconColor : "#d1d5db",
             }}
           />
+
           <span
             className={`absolute top-1/2 left-0.5 transform -translate-x-1/2 -translate-y-1/2 text-sm font-semibold ${
               item.completed ? "block text-gray-600" : "hidden"

@@ -7,7 +7,7 @@ import jsPDF from "jspdf";
 const AuditLog = () => {
   const [logs] = useState([
     {
-      date: "27 Dec 2024",
+      date: "15 Jan 2025",
       time: "14:32",
       action: "User logged in",
       user: "John Doe",
@@ -15,7 +15,7 @@ const AuditLog = () => {
       details: "Successfully logged into the system from IP 192.168.1.10.",
     },
     {
-      date: "25 Dec 2024",
+      date: "12 Jan 2025",
       time: "10:20",
       action: "Password reset",
       user: "Jane Smith",
@@ -23,7 +23,7 @@ const AuditLog = () => {
       details: "Password reset due to a security breach alert.",
     },
     {
-      date: "22 Dec 2024",
+      date: "12 Jan 2025",
       time: "09:15",
       action: "Data export",
       user: "Alice Brown",
@@ -31,7 +31,7 @@ const AuditLog = () => {
       details: "Exported sales data for Q4 2024 in CSV format.",
     },
     {
-      date: "20 Dec 2024",
+      date: "10 Jan 2025",
       time: "16:45",
       action: "Settings updated",
       user: "Eve White",
@@ -39,7 +39,7 @@ const AuditLog = () => {
       details: "Updated notification preferences for all users.",
     },
     {
-      date: "19 Dec 2024",
+      date: "9 Jan 2025",
       time: "11:30",
       action: "File uploaded",
       user: "Bob Green",
@@ -47,7 +47,7 @@ const AuditLog = () => {
       details: "Uploaded a new logo design for the project.",
     },
     {
-      date: "17 Dec 2024",
+      date: "6 Jan 2025",
       time: "08:05",
       action: "Session expired",
       user: "Charlie Black",
@@ -55,7 +55,7 @@ const AuditLog = () => {
       details: "Session expired after 30 minutes of inactivity.",
     },
     {
-      date: "15 Dec 2024",
+      date: "5 Jan 2025",
       time: "14:00",
       action: "Access denied",
       user: "David Grey",
@@ -64,7 +64,7 @@ const AuditLog = () => {
         "Attempted access to restricted database without sufficient permissions.",
     },
     {
-      date: "1 Dec 2024",
+      date: "1 Jan 2025",
       time: "13:00",
       action: "Feature deployed",
       user: "Grace Green",
@@ -72,7 +72,7 @@ const AuditLog = () => {
       details: "Deployed new reporting feature to the production environment.",
     },
     {
-      date: "30 Nov 2024",
+      date: "30 Dec 2024",
       time: "12:50",
       action: "User logged out",
       user: "Helen Blue",
@@ -80,7 +80,7 @@ const AuditLog = () => {
       details: "Logged out after completing daily tasks.",
     },
     {
-      date: "30 Nov 2024",
+      date: "30 Dec 2024",
       time: "09:00",
       action: "System update",
       user: "Ivan Yellow",
