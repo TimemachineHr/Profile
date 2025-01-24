@@ -1,54 +1,43 @@
 import React, { useState } from "react";
-import { FaPlus, FaTimes, FaEdit } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import GeneralTab from "../LeaveCreation/GeneralTab";
-import EntitlementTab from "../LeaveCreation/Entitlement";
-import ApplicabilityTab from "../LeaveCreation/Applicability";
+import { FaPlus } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import LeaveTypeModal from "../LeaveCreation/LeaveTypeModal";
 
 const LeaveHeader = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const tabs = ["General", "Entitlement", "Applicability"];
-  const [activeTab, setActiveTab] = useState("General");
-
   const [leaveType, setLeaveType] = useState("Leave Type");
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
+  const location = useLocation(); // Hook to get the current URL path
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
-    setActiveTab("General");
   };
+
+  // Define the links
+  const links = [
+    { to: "/leave", label: "Home" },
+    { to: "/leavelist", label: "List" },
+    { to: "/leavereport", label: "Report" },
+    { to: "/leavesettings", label: "Settings" },
+  ];
 
   return (
     <>
       <header className="flex justify-between items-center bg-white text-black py-2 px-6 shadow-md">
         <div className="flex space-x-4">
-          <Link
-            to="/leave"
-            className="px-4 py-2 font-semibold rounded-xl hover:bg-gray-100 hover:text-blue-900 transition duration-200"
-          >
-            Home
-          </Link>
-          <Link
-            to="/leavelist"
-            className="px-4 py-2 font-semibold rounded-xl hover:bg-gray-100 hover:text-blue-900 transition duration-200"
-          >
-            List
-          </Link>
-          <Link
-            to="/leavereport"
-            className="px-4 py-2 font-semibold rounded-xl hover:bg-gray-100 hover:text-blue-900 transition duration-200"
-          >
-            Report
-          </Link>
-          <Link
-            to="/leavesettings"
-            className="px-4 py-2 font-semibold rounded-xl hover:bg-gray-100 hover:text-blue-900 transition duration-200"
-          >
-            Settings
-          </Link>
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`px-4 py-2 font-semibold rounded-xl transition duration-200 ${
+                location.pathname === link.to
+                  ? "bg-gray-100 text-blue-900 shadow-sm" // Active styles
+                  : "hover:bg-gray-100 hover:text-blue-900"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
         <div className="text-right">
           <h2 className="text-lg font-semibold mb-1">Leave/TimeOff</h2>
@@ -61,66 +50,13 @@ const LeaveHeader = () => {
         </div>
       </header>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg w-2/3 p-4 relative">
-            <div className="px-6 py-4">
-              <div className="px-6 py-1 relative">
-                <div className="flex justify-center items-center">
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    Leave Type Creation
-                  </h2>
-                  <button
-                    onClick={handleModalToggle}
-                    className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-                  >
-                    <FaTimes size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-b-2 mb-6">
-              <nav className="flex justify-between items-center px-8 py-4 rounded-lg">
-                <div className="flex space-x-4">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`py-2 px-6 font-medium rounded-lg text-sm transition duration-300 ${
-                        activeTab === tab
-                          ? "text-white bg-blue-900 shadow-md"
-                          : "text-gray-500 hover:text-blue-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-
-                <h1 className="text-xl font-semibold text-gray-800">
-                  {leaveType}
-                </h1>
-              </nav>
-            </div>
-
-            <div>
-              {activeTab === "General" && (
-                <GeneralTab
-                  setLeaveType={setLeaveType}
-                  handleTabChange={handleTabChange}
-                />
-              )}
-              {activeTab === "Entitlement" && (
-                <EntitlementTab handleTabChange={handleTabChange} />
-              )}
-              {activeTab === "Applicability" && (
-                <ApplicabilityTab handleTabChange={handleTabChange} />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Include the modal */}
+      <LeaveTypeModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        setLeaveType={setLeaveType}
+        leaveType={leaveType}
+      />
     </>
   );
 };

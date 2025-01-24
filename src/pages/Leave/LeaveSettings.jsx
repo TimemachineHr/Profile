@@ -1,185 +1,368 @@
 import React, { useState } from "react";
+import { AiOutlineDelete } from "react-icons/ai";
 import LeaveHeader from "../../components/Main/LeaveHeader";
-import { FaInfoCircle } from "react-icons/fa";
+import axios from "axios";
+
+//  Paid through----- at employment termination or End of Leave Calendar
+// how : Payroll / Adhoc
+// When : Termination/YEarend
+// what : actual days/all(At leave type creation)
 
 const LeaveSettings = () => {
-  const [timeOffChecked, setTimeOffChecked] = useState(false);
-  const [blockLeaveChecked, setBlockLeaveChecked] = useState(false);
-  const [offInLieuChecked, setOffInLieuChecked] = useState(false);
+  const [formData, setFormData] = useState({
+    startDate: "",
+    endDate: "",
+    approvalStatus: "preapprove",
+    paymentMethod: "payroll",
+    approvers: [{ businessUnit: "", approverName: "" }],
+    timeOffChecked: false,
+    timeOffHoursPerDay: undefined,
+    blockLeaveChecked: false,
+    blockLeaveSpecificDate: "",
+    blockLeaveMonthlyRange: { startDate: "", endDate: "" },
+    offInLieuChecked: false,
+    offInLieuTimeBound: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (name) => {
+    setFormData((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
+
+  const handleApproverChange = (index, field, value) => {
+    const updatedApprovers = [...formData.approvers];
+    updatedApprovers[index][field] = value;
+    setFormData((prev) => ({ ...prev, approvers: updatedApprovers }));
+  };
+
+  const addApprover = () => {
+    setFormData((prev) => ({
+      ...prev,
+      approvers: [...prev.approvers, { businessUnit: "", approverName: "" }],
+    }));
+  };
+
+  const removeApprover = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      approvers: prev.approvers.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Format data for backend submission
+    const formattedData = {
+      ...formData,
+      startDate: formData.startDate
+        ? new Date(formData.startDate).toISOString()
+        : null,
+      endDate: formData.endDate
+        ? new Date(formData.endDate).toISOString()
+        : null,
+      blockLeaveSpecificDate: formData.blockLeaveSpecificDate
+        ? new Date(formData.blockLeaveSpecificDate).toISOString()
+        : null,
+      blockLeaveMonthlyRange: {
+        startDate: formData.blockLeaveMonthlyRange.startDate
+          ? new Date(formData.blockLeaveMonthlyRange.startDate).toISOString()
+          : null,
+        endDate: formData.blockLeaveMonthlyRange.endDate
+          ? new Date(formData.blockLeaveMonthlyRange.endDate).toISOString()
+          : null,
+      },
+      offInLieuTimeBound: formData.offInLieuTimeBound
+        ? new Date(formData.offInLieuTimeBound).toISOString()
+        : null,
+    };
+
+    try {
+      const response = await axios.post(
+        "https://leave-module.vercel.app/api/leave-settings",
+        formattedData
+      );
+      alert("Leave settings saved successfully!");
+      console.log("Saved data:", response.data);
+    } catch (error) {
+      console.error("Error saving leave settings:", error);
+      alert("Error saving leave settings. Please check your inputs.");
+    }
+  };
 
   return (
     <>
       <LeaveHeader />
-      <div className="p-8 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-xl font-semibold text-gray-700 mb-2">
-                Leave Calendar
-              </label>
-              <div className="space-y-2">
+      <form onSubmit={handleSubmit}>
+        <div className="p-8 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left Section */}
+            <div className="space-y-6">
+              {/* Leave Calendar */}
+              <div>
+                <label className="block text-xl font-semibold text-gray-700 mb-2">
+                  Leave Calendar
+                </label>
                 <label className="block text-sm font-medium text-gray-700 pt-3 mb-1">
                   Set Start & End Date
                 </label>
                 <div className="flex gap-4">
                   <input
                     type="date"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleInputChange}
                     className="p-2 border rounded-md w-34"
-                    placeholder="Start Date"
                   />
                   <input
                     type="date"
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
                     className="p-2 border rounded-md w-34"
-                    placeholder="End Date"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Reporting manager can{" "}
-                    <select className="p-2 border rounded-md w-34">
-                      <option value="preapprove">Pre-Approve</option>
-                      <option value="preapprove">Unable to View</option>
-                      <option value="viewonly">View Only</option>
-                    </select>{" "}
-                    the leave
-                  </label>
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mt-3 mb-1">
+                  Reporting manager can{" "}
+                  <select
+                    name="approvalStatus"
+                    value={formData.approvalStatus}
+                    onChange={handleInputChange}
+                    className="p-2 border rounded-md w-34"
+                  >
+                    <option value="preapprove">Pre-Approve</option>
+                    <option value="unabletoview">Unable to View</option>
+                    <option value="viewonly">View Only</option>
+                  </select>{" "}
+                  the leave
+                </label>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-xl font-semibold text-gray-700 mb-2">
-                En-cashable Payment
-              </label>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {" "}
-                Paid through{" "}
-                <select className="p-2 border rounded-md w-36">
-                  <option value="payroll">Payroll</option>
-                  <option value="adhoc">Ad-Hoc</option>
-                </select>
-              </label>
-            </div>
+              {/* En-cashable Payment */}
+              <div>
+                <label className="block text-xl font-semibold text-gray-700 mb-2">
+                  En-cashable Payment
+                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Paid through{" "}
+                  <select
+                    name="paymentMethod"
+                    value={formData.paymentMethod}
+                    onChange={handleInputChange}
+                    className="p-2 border rounded-md w-36"
+                  >
+                    <option value="payroll">Payroll</option>
+                    <option value="adhoc">Ad-Hoc</option>
+                  </select>{" "}
+                  at employment termination or End of Leave Calendar
+                </label>
+              </div>
 
-            <div>
-              <label className="block text-xl font-medium text-gray-700 mb-2">
-                Leave Approver
-              </label>
-              <div className="space-y-2 space-x-3">
-                <select className="p-2 border rounded-md w-36">
-                  <option value="">Business Unit</option>
-                  <option value="unit1">Unit 1</option>
-                  <option value="unit2">Unit 2</option>
-                </select>
-                <select className="p-2 border rounded-md w-38">
-                  <option value="">Approver Name</option>
-                  <option value="manager">Manager</option>
-                  <option value="hr">HR</option>
-                </select>
-
-                <button className="bg-[#1A72A7] text-white px-4 py-2 rounded-md">
+              {/* Leave Approver */}
+              <div>
+                <label className="block text-xl font-medium text-gray-700 mb-2">
+                  Leave Approver
+                </label>
+                {formData.approvers.map((approver, index) => (
+                  <div key={index} className="flex items-center space-x-3 mb-2">
+                    <select
+                      className="p-2 border rounded-md w-36"
+                      value={approver.businessUnit}
+                      onChange={(e) =>
+                        handleApproverChange(
+                          index,
+                          "businessUnit",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="">Business Unit</option>
+                      <option value="unit1">Unit 1</option>
+                      <option value="unit2">Unit 2</option>
+                    </select>
+                    <select
+                      className="p-2 border rounded-md w-38"
+                      value={approver.approverName}
+                      onChange={(e) =>
+                        handleApproverChange(
+                          index,
+                          "approverName",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="">Approver Name</option>
+                      <option value="JohnDoe">John Doe</option>
+                      <option value="JaneSmith">Jane Smith</option>
+                      <option value="Franky">Franky</option>
+                    </select>
+                    {formData.approvers.length > 1 && (
+                      <button
+                        title="Remove Approver"
+                        type="button"
+                        onClick={() => removeApprover(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <AiOutlineDelete size={20} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addApprover}
+                  className="bg-[#1A72A7] text-white px-4 py-2 rounded-md mt-2"
+                >
                   Assign Approver
                 </button>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-6">
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 border-[#1A72A7] shadow-[0_0_4px_#1A72A7] rounded-md accent-[#1A72A7]"
-                  checked={timeOffChecked}
-                  onChange={(e) => setTimeOffChecked(e.target.checked)}
-                />
-
-                <span className="text-lg font-medium text-[#1A72A7] ">
-                  Time Off
-                </span>
-              </label>
-              {timeOffChecked && (
-                <div className="mt-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    One day leave is{" "}
-                    <input
-                      type="number"
-                      className="p-2 border rounded-md w-28"
-                      placeholder="Enter hours"
-                    />{" "}
-                    hrs
-                  </label>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 border-[#1A72A7] shadow-[0_0_4px_#1A72A7] rounded-md accent-[#1A72A7]"
-                  checked={blockLeaveChecked}
-                  onChange={(e) => setBlockLeaveChecked(e.target.checked)}
-                />
-                <span className="text-lg font-medium text-[#1A72A7] ">
-                  Block Leave
-                </span>
-              </label>
-              {blockLeaveChecked && (
-                <div className="mt-2 space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    On specific date{" "}
-                    <input type="date" className="p-2 border rounded-md w-36" />
-                  </label>
-                  <div className="flex gap-4">
+            {/* Right Section */}
+            <div className="space-y-6">
+              {/* Time Off */}
+              <div>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 border-[#1A72A7] shadow-[0_0_4px_#1A72A7] rounded-md accent-[#1A72A7]"
+                    checked={formData.timeOffChecked}
+                    onChange={() => handleCheckboxChange("timeOffChecked")}
+                  />
+                  <span className="text-lg font-medium text-[#1A72A7]">
+                    Time Off
+                  </span>
+                </label>
+                {formData.timeOffChecked && (
+                  <div className="mt-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Leave from{" "}
+                      One day leave is{" "}
                       <input
-                        type="date"
-                        className="p-2 border rounded-md w-36"
+                        type="number"
+                        name="timeOffHoursPerDay"
+                        value={formData.timeOffHoursPerDay || ""}
+                        onChange={handleInputChange}
+                        className="p-2 border rounded-md w-28"
+                        placeholder="Enter hours"
                       />{" "}
-                      to{" "}
-                      <input
-                        type="date"
-                        className="p-2 border rounded-md w-36"
-                      />{" "}
-                      every month
+                      hrs
                     </label>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 border-[#1A72A7] shadow-[0_0_4px_#1A72A7] rounded-md accent-[#1A72A7]"
-                  checked={offInLieuChecked}
-                  onChange={(e) => setOffInLieuChecked(e.target.checked)}
-                />
-                <span className="text-lg font-medium text-[#1A72A7] ">
-                  Off-In-Lieu
-                </span>
-              </label>
-              {offInLieuChecked && (
-                <div className="mt-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Time Bound{" "}
-                    <input type="date" className="p-2 border rounded-md w-36" />
-                  </label>
-                </div>
-              )}
+              {/* Block Leave */}
+              <div>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 border-[#1A72A7] shadow-[0_0_4px_#1A72A7] rounded-md accent-[#1A72A7]"
+                    checked={formData.blockLeaveChecked}
+                    onChange={() => handleCheckboxChange("blockLeaveChecked")}
+                  />
+                  <span className="text-lg font-medium text-[#1A72A7]">
+                    Block Leave
+                  </span>
+                </label>
+                {formData.blockLeaveChecked && (
+                  <div className="mt-2 space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      On specific date{" "}
+                      <input
+                        type="date"
+                        name="blockLeaveSpecificDate"
+                        value={formData.blockLeaveSpecificDate}
+                        onChange={handleInputChange}
+                        className="p-2 border rounded-md w-36"
+                      />
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Leave from{" "}
+                        <input
+                          type="date"
+                          name="blockLeaveMonthlyRangeStart"
+                          value={formData.blockLeaveMonthlyRange.startDate}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              blockLeaveMonthlyRange: {
+                                ...prev.blockLeaveMonthlyRange,
+                                startDate: e.target.value,
+                              },
+                            }))
+                          }
+                          className="p-2 border rounded-md w-36"
+                        />{" "}
+                        to{" "}
+                        <input
+                          type="date"
+                          name="blockLeaveMonthlyRangeEnd"
+                          value={formData.blockLeaveMonthlyRange.endDate}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              blockLeaveMonthlyRange: {
+                                ...prev.blockLeaveMonthlyRange,
+                                endDate: e.target.value,
+                              },
+                            }))
+                          }
+                          className="p-2 border rounded-md w-36"
+                        />{" "}
+                        every month
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Off-In-Lieu */}
+              <div>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 border-[#1A72A7] shadow-[0_0_4px_#1A72A7] rounded-md accent-[#1A72A7]"
+                    checked={formData.offInLieuChecked}
+                    onChange={() => handleCheckboxChange("offInLieuChecked")}
+                  />
+                  <span className="text-lg font-medium text-[#1A72A7]">
+                    Off-In-Lieu
+                  </span>
+                </label>
+                {formData.offInLieuChecked && (
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Time Bound{" "}
+                      <input
+                        type="date"
+                        name="offInLieuTimeBound"
+                        value={formData.offInLieuTimeBound}
+                        onChange={handleInputChange}
+                        className="p-2 border rounded-md w-36"
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-8 text-right">
-          <button className="bg-green-600 text-white px-6 py-2 rounded-md">
-            Save
-          </button>
+          {/* Submit Button */}
+          <div className="mt-8 text-right">
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-6 py-2 rounded-md"
+            >
+              Save
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </>
   );
 };

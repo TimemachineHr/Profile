@@ -4,8 +4,10 @@ import { ImCross } from "react-icons/im";
 
 const ScheduleModal = ({
   closeModal,
-  newTime,
-  setNewTime,
+  newStartTime,
+  setNewStartTime,
+  newEndTime,
+  setNewEndTime,
   newDescription,
   setNewDescription,
   handleAddPlan,
@@ -29,8 +31,8 @@ const ScheduleModal = ({
     const currentTime = new Date();
     const userTime = new Date();
 
-    const [hours, minutes] = newTime.split(":");
-    userTime.setHours(hours, minutes, 0);
+    const [startHours, startMinutes] = newStartTime.split(":");
+    userTime.setHours(startHours, startMinutes, 0);
 
     const diffMinutes = Math.floor(
       (userTime.getTime() - currentTime.getTime()) / (1000 * 60)
@@ -51,99 +53,122 @@ const ScheduleModal = ({
   const dynamicReminderOptions = generateReminderOptions();
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-      <div className="bg-white p-3 rounded-xl shadow-lg w-96 relative">
-        <h2 className="text-lg font-semibold mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm relative">
+        {/* Close Button */}
+        <button
+          onClick={closeModal}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+        >
+          <ImCross size={18} />
+        </button>
+
+        {/* Title */}
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
           {newDescription ? newDescription : "Add New Plan"}
         </h2>
 
-        <button
-          onClick={closeModal}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-        >
-          <ImCross />
-        </button>
+        {/* Icon Picker, Start Time, and End Time */}
+        <div className="flex items-center space-x-4 mb-4">
+          {/* Icon Picker */}
+          <div className="relative">
+            <div
+              className="cursor-pointer rounded-full p-3 text-2xl shadow-md"
+              style={{ backgroundColor: iconColor }}
+              onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
+            >
+              {React.createElement(FaIcons[selectedIcon], {
+                style: { fontSize: "24px", color: "white" },
+              })}
+            </div>
 
-        {/* Time Input with Icon Picker */}
-        <div className="flex items-center mb-3">
-          <div
-            // className="cursor-pointer rounded p-2 bg-red-300 text-2xl mr-3"
-            className="cursor-pointer rounded-full p-2 text-2xl mr-3"
-            style={{ backgroundColor: iconColor }}
-            onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
-          >
-            {React.createElement(FaIcons[selectedIcon], {
-              style: { fontSize: "24px", color: "white" },
-            })}
-          </div>
-          <input
-            type="time"
-            value={newTime}
-            onChange={(e) => setNewTime(e.target.value)}
-            className="w-full p-2 border rounded-lg"
-          />
-        </div>
-
-        {/* Icon Picker */}
-        {isIconPickerOpen && (
-          <div className="absolute bg-white border rounded-lg shadow-lg p-3 w-full z-50">
-            <div className="grid grid-cols-5 gap-2 max-h-40 overflow-y-auto">
-              {icons.map(([iconName, IconComponent]) => (
-                <div
-                  key={iconName}
-                  className={`p-2 border rounded cursor-pointer ${
-                    selectedIcon === iconName ? "bg-gray-300" : ""
-                  }`}
-                  onClick={() => handleIconSelect(iconName)}
-                >
-                  <IconComponent style={{ fontSize: "20px" }} />
+            {isIconPickerOpen && (
+              <div className="absolute bg-white border rounded-lg shadow-lg p-3 w-64 mt-2 left-0 z-50">
+                <div className="grid grid-cols-5 gap-2 max-h-40 overflow-y-auto">
+                  {icons.map(([iconName, IconComponent]) => (
+                    <div
+                      key={iconName}
+                      className={`p-2 border rounded cursor-pointer ${
+                        selectedIcon === iconName ? "bg-gray-300" : ""
+                      }`}
+                      onClick={() => handleIconSelect(iconName)}
+                    >
+                      <IconComponent style={{ fontSize: "20px" }} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div className="mt-3 pt-2 border-t flex justify-between">
-              <label>Icon Color:</label>
-              <input
-                type="color"
-                value={iconColor}
-                onChange={(e) => setIconColor(e.target.value)}
-                className="cursor-pointer"
-              />
-            </div>
+                <div className="mt-3 pt-2 border-t flex justify-between">
+                  <label>Icon Color:</label>
+                  <input
+                    type="color"
+                    value={iconColor}
+                    onChange={(e) => setIconColor(e.target.value)}
+                    className="cursor-pointer"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Start Time Input */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">
+              Start Time:
+            </label>
+            <input
+              type="time"
+              value={newStartTime}
+              onChange={(e) => setNewStartTime(e.target.value)}
+              className="p-2 border rounded-lg shadow-sm w-28"
+            />
+          </div>
+
+          {/* End Time Input */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">End Time:</label>
+            <input
+              type="time"
+              value={newEndTime}
+              onChange={(e) => setNewEndTime(e.target.value)}
+              className="p-2 border rounded-lg shadow-sm w-28"
+            />
+          </div>
+        </div>
 
         {/* Description Input */}
         <input
           type="text"
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
-          className="w-full p-2 mb-3 border rounded-lg"
+          className="w-full p-3 border rounded-lg shadow-sm mb-4"
           placeholder="Enter description"
         />
 
         {/* Reminder Section */}
         <div className="flex items-center mb-4">
-          <label className="mr-2">Set Reminder</label>
+          <label className="mr-3 text-gray-700 font-medium">
+            Set Reminder:
+          </label>
           <input
             type="checkbox"
             checked={isReminderOn}
             onChange={() => setIsReminderOn(!isReminderOn)}
-            className="toggle-checkbox"
+            className="w-5 h-5 accent-[#007b5e]"
           />
         </div>
 
         {isReminderOn && (
-          <div className="mb-4 h-24 overflow-y-scroll scrollbar-hide border rounded-lg">
+          <div className="mb-4 h-24 overflow-y-scroll scrollbar-hide border rounded-lg shadow-inner p-2">
             {dynamicReminderOptions.length > 0 ? (
               dynamicReminderOptions.map((option, index) => (
                 <div
                   key={index}
                   onClick={() => setSelectedReminder(option.label)}
-                  className={`p-2 text-center cursor-pointer ${
+                  className={`p-2 text-center cursor-pointer rounded-lg ${
                     selectedReminder === option.label
                       ? "bg-[#007b5e] text-white"
                       : "bg-gray-100 text-gray-800"
-                  } hover:bg-[#007b5e] hover:text-white`}
+                  } hover:bg-[#007b5e] hover:text-white transition`}
                 >
                   {option.label}
                 </div>
@@ -160,9 +185,9 @@ const ScheduleModal = ({
         <div className="flex justify-end">
           <button
             onClick={() => handleAddPlan(selectedReminder)}
-            className="px-4 py-2 bg-[#007b5e] text-white rounded-lg hover:bg-[#124d3f]"
+            className="px-6 py-2 bg-[#007b5e] text-white rounded-lg hover:bg-[#124d3f] transition"
           >
-            Add
+            Add Plan
           </button>
         </div>
       </div>

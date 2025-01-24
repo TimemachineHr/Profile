@@ -55,8 +55,6 @@ const App = () => {
 
       {/* Client */}
       <Route path="/client/clientexpense" element={<ClientExpense />} />
-
-      {/* Client */}
       <Route path="/client/clientleave" element={<ClientLeave />} />
 
       <Route path="/profile" element={<Profile />} />

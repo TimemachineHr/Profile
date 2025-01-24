@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaLock, FaCopy, FaPlus } from "react-icons/fa";
+import { FaLock, FaCopy, FaPlus, FaCalendarAlt } from "react-icons/fa";
 import ScheduleItem from "./ScheduleItem";
 import ScheduleModal from "./ScheduleModal";
 import DateNavigator from "./DateNavigator";
+import AllTaskModal from "./AllTaskModal";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ImCross } from "react-icons/im";
@@ -13,7 +14,8 @@ const DailySchedule = ({ triggerConfetti }) => {
   const [schedule, setSchedule] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newTime, setNewTime] = useState("");
+  const [newStartTime, setNewStartTime] = useState("");
+  const [newEndTime, setNewEndTime] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [selectedIcon, setSelectedIcon] = useState("FaClock");
   const [iconColor, setIconColor] = useState("#000000");
@@ -22,6 +24,14 @@ const DailySchedule = ({ triggerConfetti }) => {
   const [selectedDateForCopy, setSelectedDateForCopy] = useState(null);
   const [isAllTasksOpen, setIsAllTasksOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(currentDate);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setShowCalendar(false);
+    changeDay(date); // Assuming this function changes the displayed tasks based on the new date
+  };
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -161,7 +171,8 @@ const DailySchedule = ({ triggerConfetti }) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
-    setNewTime("");
+    setNewStartTime("");
+    setNewEndTime("");
     setNewDescription("");
     setSelectedIcon("FaClock");
     setIconColor("#000000");
@@ -169,9 +180,11 @@ const DailySchedule = ({ triggerConfetti }) => {
   };
 
   const handleAddPlan = async () => {
-    if (newTime && newDescription) {
+    if (newStartTime && newDescription) {
+      // Create a new task object, including `endTime` only if it's provided
       const newTask = {
-        time: newTime,
+        startTime: newStartTime,
+        endTime: newEndTime || null, // If `newEndTime` is not provided, set it to `null`
         description: newDescription,
         completed: false,
         icon: selectedIcon,
@@ -183,7 +196,7 @@ const DailySchedule = ({ triggerConfetti }) => {
 
       setSchedule((prevSchedule) => [...prevSchedule, newTask]);
 
-      // Save new task to the API
+      // Save the new task to the API
       try {
         await fetch("https://tasks-backend-tms.vercel.app/api/plans", {
           method: "POST",
@@ -194,7 +207,10 @@ const DailySchedule = ({ triggerConfetti }) => {
         console.error("Error adding task:", error);
       }
 
-      closeModal();
+      closeModal(); // Close the modal after task creation
+    } else {
+      // Optionally handle validation if `newStartTime` or `newDescription` is missing
+      alert("Start time and description are required");
     }
   };
 
@@ -225,7 +241,10 @@ const DailySchedule = ({ triggerConfetti }) => {
 
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-bold text-lg text-gray-800">Plan My Day</h3>
-        <div className="flex items-center space-x-2">
+        <div
+          className="flex items-center space-x-2"
+          title={"These plans are visible only to you (private)"}
+        >
           <FaLock className="text-gray-500" />
           <span className="text-gray-700">Private</span>
         </div>
@@ -272,8 +291,10 @@ const DailySchedule = ({ triggerConfetti }) => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-90 flex justify-center items-center z-50">
           <ScheduleModal
             closeModal={closeModal}
-            newTime={newTime}
-            setNewTime={setNewTime}
+            newStartTime={newStartTime}
+            setNewStartTime={setNewStartTime}
+            newEndTime={newEndTime}
+            setNewEndTime={setNewEndTime}
             newDescription={newDescription}
             setNewDescription={setNewDescription}
             selectedIcon={selectedIcon}
@@ -290,8 +311,7 @@ const DailySchedule = ({ triggerConfetti }) => {
       {/* Calendar Modal */}
       {isCalendarOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-4  max-w-lg relative">
-            {/* Title and Close Button */}
+          <div className="bg-white rounded-lg shadow-lg p-4 max-w-lg relative">
             <div className="flex justify-between mb-3 items-center">
               <h3 className="text-xl font-semibold text-gray-800">
                 Select Date
@@ -304,7 +324,6 @@ const DailySchedule = ({ triggerConfetti }) => {
               </button>
             </div>
 
-            {/* Calendar */}
             <div className="w-full overflow-hidden">
               <DatePicker
                 selected={selectedDateForCopy}
@@ -314,7 +333,6 @@ const DailySchedule = ({ triggerConfetti }) => {
               />
             </div>
 
-            {/* Copy Tasks Button */}
             <button
               onClick={copyScheduleToDate}
               className="w-full py-2 bg-[#007b5e] text-white font-semibold rounded-lg hover:bg-green-900 transition-all mt-3"
@@ -334,56 +352,22 @@ const DailySchedule = ({ triggerConfetti }) => {
 
       {isAllTasksOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-40">
-          <div className="bg-white rounded-lg shadow-lg p-6 pt-2 w-1/2 max-h-[90vh] overflow-y-auto relative">
-            {/* Header with All Tasks Title and Close Button */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-800">All Tasks</h3>
-              <button
-                onClick={() => setIsAllTasksOpen(false)}
-                className="text-gray-600 hover:text-gray-800 focus:outline-none"
-              >
-                <ImCross />
-              </button>
-            </div>
-
-            {/* Header with Date Navigator and Copy Button */}
-            <div className="flex justify-between items-center mb-4 mt-4">
-              <DateNavigator currentDate={currentDate} changeDay={changeDay} />
-              <button
-                onClick={handleCopy} // This opens the Copy Plans modal
-                className="text-gray-500 hover:text-gray-700"
-                title="Copy Day"
-              >
-                <FaCopy />
-              </button>
-            </div>
-
-            {/* Tasks for the Selected Date */}
-            <ul className="space-y-2 mb-4">
-              {filteredSchedule.length === 0 ? (
-                <li className="text-gray-500 text-center">
-                  No tasks for this date
-                </li>
-              ) : (
-                filteredSchedule.map((item, index) => (
-                  <ScheduleItem
-                    key={item._id}
-                    item={item}
-                    index={index}
-                    toggleComplete={toggleComplete}
-                    isLast={index === filteredSchedule.length - 1}
-                  />
-                ))
-              )}
-            </ul>
-            <button
-              onClick={openModal}
-              className="ml-auto px-2 py-1 bg-[#007b5e] text-white rounded-lg flex items-center space-x-1 hover:bg-[#124d3f]"
-            >
-              <FaPlus className="text-sm" />
-              <span>Add Plan</span>
-            </button>
-          </div>
+          <AllTaskModal
+            isOpen={isAllTasksOpen}
+            onClose={() => setIsAllTasksOpen(false)}
+            schedule={schedule}
+            toggleComplete={toggleComplete}
+            copyScheduleToDate={copyScheduleToDate}
+            handleCopy={handleCopy}
+            openModal={openModal}
+          />
+          {/* <AllTaskModal
+            onClose={() => setIsAllTasksOpen(false)}
+            schedule={schedule}
+            toggleComplete={toggleComplete}
+            handleCopy={handleCopy}
+            openModal={openModal}
+          /> */}
         </div>
       )}
 
