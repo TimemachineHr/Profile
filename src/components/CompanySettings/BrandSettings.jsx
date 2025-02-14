@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { FaEdit } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
 
 const BrandSettings = () => {
-  const [baseCurrency, setBaseCurrency] = useState("USD");
-  const [color, setColor] = useState("#FFFFFF");
+  const [brandSettings, setBrandSettings] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [settingsId, setSettingsId] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handleToggle = () => {
@@ -12,15 +15,89 @@ const BrandSettings = () => {
   const handleClose = () => {
     setIsPopupOpen(false);
   };
-  const handleColorChange = (e) => {
-    setColor(e.target.value);
+
+  useEffect(() => {
+    fetch("https://company-settings-one.vercel.app/api/company-settings/")
+      .then((response) => response.json())
+      .then((data) => {
+        setBrandSettings(data[0].brandSettings);
+        setSettingsId(data[0]._id);
+      });
+  }, []);
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
   };
+
+  const handleSave = () => {
+    if (!settingsId) return;
+    fetch(
+      `https://company-settings-one.vercel.app/api/company-settings/${settingsId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ brandSettings }),
+      }
+    ).then(() => setIsEditing(false));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setBrandSettings((prev) => {
+      if (name in prev) {
+        // Updating top-level fields
+        return { ...prev, [name]: value };
+      } else {
+        // Updating nested fields (exchangeRateConfig)
+        return {
+          ...prev,
+          exchangeRateConfig: {
+            ...prev.exchangeRateConfig,
+            [name]: value,
+          },
+        };
+      }
+    });
+  };
+
+  if (!brandSettings) return <div>Loading...</div>;
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-      <h2 className="text-xl font-semibold mb-6">Brand</h2>
-      {/* Row 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Brand</h2>
+        <button
+          onClick={handleEditToggle}
+          className=" py-2 text-gray-600 hover:text-blue-600"
+        >
+          {isEditing ? (
+            <ImCross size={18} title="Close" />
+          ) : (
+            <FaEdit title="Edit" size={20} />
+          )}
+        </button>
+      </div>
+
+      {/* Brand Color */}
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+        <div className="flex flex-col">
+          <label className="text-gray-700 text-md font-medium mb-2">
+            Brand Color
+          </label>
+          <input
+            type="color"
+            name="brandColor"
+            value={brandSettings.brandColor}
+            onChange={handleChange}
+            disabled={!isEditing}
+            className="w-12 h-10 p-1 rounded-md border"
+          />
+        </div>
+      </div> */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
         <div className="flex flex-col">
           <label
             htmlFor="colourcode"
@@ -31,31 +108,36 @@ const BrandSettings = () => {
           <div className="flex items-center border rounded-md">
             <input
               type="text"
-              value={color}
-              readOnly
+              value={brandSettings.brandColor}
+              onChange={handleChange}
+              disabled={!isEditing}
               className="p-2 w-full font-light text-gray-700 border-none focus:outline-none"
             />
             <input
               type="color"
               id="colourcode"
-              name="colourcode"
-              value={color}
-              onChange={handleColorChange}
+              name="brandColor"
+              value={brandSettings.brandColor}
+              onChange={handleChange}
+              disabled={!isEditing}
               className="w-12 h-10 p-1 rounded-r-md border-l"
             />
           </div>
         </div>
       </div>
+
+      {/* Functional Currency, Currency Placement, Decimals */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
-        {/* Functional Currency */}
         <div>
           <label className="block text-gray-700 text-md font-medium mb-2">
             Functional Currency
           </label>
           <select
+            name="baseCurrency"
             className="p-2 border rounded-md w-full"
-            value={baseCurrency}
-            onChange={(e) => setBaseCurrency(e.target.value)}
+            value={brandSettings.baseCurrency}
+            onChange={handleChange}
+            disabled={!isEditing}
           >
             <option value="USD">🇺🇸 USD - United States Dollar</option>
             <option value="INR">🇮🇳 INR - Indian Rupee</option>
@@ -63,39 +145,36 @@ const BrandSettings = () => {
             <option value="MYR">🇲🇾 MYR - Malaysian Ringgit</option>
           </select>
         </div>
-        {/* Currency Placement */}
         <div>
           <label className="block text-gray-700 text-md font-medium mb-2">
             Currency Placement
           </label>
-          <div className="flex items-center mt-4 space-x-4">
-            <label className="flex items-center space-x-2">
-              <input type="radio" name="placement" value="front" />
-              <span>In Front</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input type="radio" name="placement" value="rear" />
-              <span>At Rear</span>
-            </label>
-          </div>
+          <select
+            name="currencyPlacement"
+            className="p-2 border rounded-md w-full"
+            value={brandSettings.currencyPlacement}
+            onChange={handleChange}
+            disabled={!isEditing}
+          >
+            <option value="front">Before Currency</option>
+            <option value="rear">After Currency</option>
+          </select>
         </div>
-        {/* Decimals */}
         <div>
           <label className="block text-gray-700 text-md font-medium mb-2">
             Decimals
           </label>
-          <div className="flex items-center mt-4 space-x-4">
-            <label className="flex items-center space-x-2">
-              <input type="radio" name="decimals" value="none" />
-              <span>No Decimals</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input type="radio" name="decimals" value="two" />
-              <span>Keep 2 Decimals</span>
-            </label>
-          </div>
+          <select
+            name="decimals"
+            className="p-2 border rounded-md w-full"
+            value={brandSettings.decimals}
+            onChange={handleChange}
+            disabled={!isEditing}
+          >
+            <option value="none">No Decimals</option>
+            <option value="two">Keep 2 Decimals</option>
+          </select>
         </div>
-
         <div className="relative">
           {/* Toggle Button */}
           <div className="flex items-center space-x-4 mb-4">
@@ -135,6 +214,9 @@ const BrandSettings = () => {
                     <input
                       type="text"
                       id="base"
+                      value={brandSettings.baseCurrency}
+                      onChange={handleChange}
+                      disabled={!isEditing}
                       placeholder="Enter base currency (e.g., USD)"
                       className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -158,7 +240,11 @@ const BrandSettings = () => {
                     </div>
                     <input
                       type="text"
-                      id="api"
+                      id="apiURL"
+                      name="apiURL"
+                      value={brandSettings.exchangeRateConfig.apiURL}
+                      onChange={handleChange}
+                      disabled={!isEditing}
                       placeholder="https://exchange-rates-api.oanda.com"
                       className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -173,7 +259,10 @@ const BrandSettings = () => {
                     </label>
                     <input
                       type="text"
-                      id="id"
+                      name="id"
+                      value={brandSettings.exchangeRateConfig.id}
+                      onChange={handleChange}
+                      disabled={!isEditing}
                       placeholder="Enter your ID"
                       className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -187,7 +276,10 @@ const BrandSettings = () => {
                     </label>
                     <input
                       type="text"
-                      id="token"
+                      name="token"
+                      value={brandSettings.exchangeRateConfig.token}
+                      onChange={handleChange}
+                      disabled={!isEditing}
                       placeholder="Enter API Token"
                       className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -203,10 +295,10 @@ const BrandSettings = () => {
                     Cancel
                   </button>
                   <button
-                    onClick={() => alert("Submitted!")}
+                    onClick={handleClose}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
-                    Submit
+                    Save
                   </button>
                 </div>
               </div>
@@ -215,30 +307,68 @@ const BrandSettings = () => {
         </div>
       </div>
 
-      {/* Row 2 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-        {/* Date Format */}
+      {/* Date Format, Time Format, Choose Theme */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
         <div>
           <label className="block text-gray-700 text-md font-medium mb-2">
             Date Format
           </label>
-          <select className="p-2 border rounded-md w-full">
+          <select
+            name="dateFormat"
+            className="p-2 border rounded-md w-full"
+            value={brandSettings.dateFormat}
+            onChange={handleChange}
+            disabled={!isEditing}
+          >
             <option value="dd/mm/yyyy">DD/MM/YYYY</option>
             <option value="mm/dd/yyyy">MM/DD/YYYY</option>
             <option value="yyyy-mm-dd">YYYY-MM-DD</option>
           </select>
         </div>
-        {/* Time Format */}
         <div>
           <label className="block text-gray-700 text-md font-medium mb-2">
             Time Format
           </label>
-          <select className="p-2 border rounded-md w-full">
+          <select
+            name="timeFormat"
+            className="p-2 border rounded-md w-full"
+            value={brandSettings.timeFormat}
+            onChange={handleChange}
+            disabled={!isEditing}
+          >
             <option value="12-hour">12-Hour</option>
             <option value="24-hour">24-Hour</option>
           </select>
         </div>
+        {/* <div>
+          <label className="block text-gray-700 text-md font-medium mb-2">
+            Choose Theme
+          </label>
+          <select
+            name="systemTheme"
+            className="p-2 border rounded-md w-full"
+            value={brandSettings.systemTheme}
+            onChange={handleChange}
+            disabled={!isEditing}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system-default">System default</option>
+          </select>
+        </div> */}
       </div>
+
+      {/* Save Button */}
+      {isEditing && (
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800"
+          >
+            Save
+          </button>
+        </div>
+      )}
     </div>
   );
 };

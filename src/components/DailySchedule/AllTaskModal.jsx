@@ -46,7 +46,7 @@ const AllTaskModal = ({
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-40">
-      <div className="bg-white rounded-lg shadow-lg p-6 pt-2 w-1/2 max-h-[90vh] overflow-y-auto relative">
+      <div className="bg-white rounded-lg shadow-lg p-6 pt-2 w-1/2 max-h-[90vh] min-h-[600px] relative">
         {/* Header with All Tasks Title and Close Button */}
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold text-gray-800">Plan My Day</h3>
@@ -91,9 +91,9 @@ const AllTaskModal = ({
         </div>
 
         {/* Tasks for the Selected Date */}
-        <ul className="space-y-2 mb-4">
+        <ul className="space-y-2 mb-4 max-h-[400px] overflow-y-auto">
           {filteredSchedule.length === 0 ? (
-            <li className="text-gray-500 text-center">
+            <li className="text-gray-500 text-center py-20">
               No tasks for this date
             </li>
           ) : (
@@ -112,7 +112,7 @@ const AllTaskModal = ({
         {/* Add Plan Button */}
         <button
           onClick={openModal}
-          className="ml-auto px-2 py-1 bg-[#007b5e] text-white rounded-lg flex items-center space-x-1 hover:bg-[#124d3f]"
+          className="absolute bottom-4 right-4 px-3 py-2 bg-[#007b5e] text-white rounded-lg flex items-center space-x-1 hover:bg-[#124d3f] shadow-md"
         >
           <FaPlus className="text-sm" />
           <span>Add Plan</span>

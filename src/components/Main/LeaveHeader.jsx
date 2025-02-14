@@ -13,7 +13,6 @@ const LeaveHeader = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  // Define the links
   const links = [
     { to: "/leave", label: "Home" },
     { to: "/leavelist", label: "List" },

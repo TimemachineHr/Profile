@@ -3,6 +3,8 @@ import LeaveHeader from "../../components/Main/LeaveHeader";
 import { MdDelete } from "react-icons/md";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import axios from "axios";
+import { MdPrint, MdOutlineFileDownload } from "react-icons/md";
+import { IoMdShareAlt } from "react-icons/io";
 import LeaveTypeModal from "../../components/LeaveCreation/LeaveTypeModal";
 
 const LeaveList = () => {
@@ -14,7 +16,8 @@ const LeaveList = () => {
   const [inputValue, setInputValue] = useState("");
   const [leaveTypeToDelete, setLeaveTypeToDelete] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState(null); // State for selected leave to edit
+  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchLeaveData = async () => {
@@ -45,8 +48,8 @@ const LeaveList = () => {
   };
 
   const handleEdit = (leave) => {
-    setSelectedLeave(leave); // Set the selected leave type for editing
-    setIsModalOpen(true); // Open the modal
+    setSelectedLeave(leave);
+    setIsModalOpen(true);
   };
 
   const handleConfirm = () => {
@@ -62,10 +65,41 @@ const LeaveList = () => {
   return (
     <>
       <LeaveHeader />
-      <h1 className="text-2xl font-bold text-red-500 px-6 pt-6">
-        Existing Leave Type / Available Leave Type
-      </h1>
-      <div className="p-8">
+
+      {/* Dropdown Button at Top-Right */}
+      <div className="relative">
+        <div className="absolute right-6 top-4 z-10">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full text-gray-600 hover:bg-gray-400 focus:outline-none"
+            title="Options"
+          >
+            ⋮
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-14 bg-white shadow-lg border rounded-md text-left z-20 flex flex-col">
+              <button className="flex items-center justify-center w-full p-2 hover:bg-gray-100 transition">
+                <MdPrint size={22} className="text-gray-600" title="Print" />
+              </button>
+              <button className="flex items-center justify-center w-full p-2 hover:bg-gray-100 transition">
+                <MdOutlineFileDownload
+                  size={22}
+                  className="text-gray-600"
+                  title="Download"
+                />
+              </button>
+              <button className="flex items-center justify-center w-full p-2 hover:bg-gray-100 transition">
+                <IoMdShareAlt
+                  size={22}
+                  className="text-gray-600"
+                  title="Share"
+                />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="p-8 pt-16">
         <table className="w-full border border-gray-300 rounded-xl overflow-hidden shadow-lg">
           <thead className="bg-blue-900 text-center text-white">
             <tr>

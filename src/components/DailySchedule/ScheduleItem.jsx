@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as FaIcons from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 
 const ScheduleItem = ({ item, toggleComplete, isLast }) => {
   const IconComponent = FaIcons[item.icon] || FaIcons.FaTasks; // Fallback to FaTasks
+
+  // Ref to measure text width
+  const textRef = useRef(null);
+  const [textWidth, setTextWidth] = useState(0);
 
   // Calculate duration in hours
   const startTime = new Date(`1970-01-01T${item.startTime}:00`);
@@ -18,6 +22,13 @@ const ScheduleItem = ({ item, toggleComplete, isLast }) => {
     itemHeight = 80; // 3+ hours, max capped
   }
 
+  // Measure the text width when the component mounts or updates
+  useEffect(() => {
+    if (textRef.current) {
+      setTextWidth(textRef.current.offsetWidth); // Get the rendered width of the text
+    }
+  }, [item.description]);
+
   return (
     <div className="flex items-start space-x-4 relative">
       {/* Timeline Indicator */}
@@ -29,7 +40,7 @@ const ScheduleItem = ({ item, toggleComplete, isLast }) => {
               borderColor: item.completed ? item.iconColor || "#ccc" : "#ccc",
               height: `${itemHeight + 20}px`, // Use dynamic height here
             }}
-            className="absolute top-8 left-4 w-1  border-l-2 border-dotted"
+            className="absolute top-8 left-4 w-1 border-l-2 border-dotted"
           ></div>
         )}
 
@@ -38,7 +49,6 @@ const ScheduleItem = ({ item, toggleComplete, isLast }) => {
           className={`flex items-center justify-center z-10`}
           style={{
             backgroundColor: item.iconColor || "#ccc",
-            // height: `${itemHeight}px`, // Dynamic height applied here
             height: duration <= 1 ? "33px" : `${itemHeight}px`, // Fixed height
             width: "33px", // Fixed width
             borderRadius: duration <= 1 ? "50%" : "90px", // Circle for 1 hour, rounded rectangle otherwise
@@ -53,18 +63,39 @@ const ScheduleItem = ({ item, toggleComplete, isLast }) => {
         <span className="text-gray-600 text-sm">
           {item.startTime} - {item.endTime}
         </span>
-        <span
-          className={`font-medium text-gray-800 ${
-            item.completed ? "line-through text-gray-500" : ""
-          }`}
-        >
-          {item.description}
+        <span className="relative inline-block">
+          {/* Main Text */}
+          <span
+            ref={textRef} // Attach the ref to measure the text width
+            className={`font-medium text-gray-800 ${
+              item.completed ? "text-gray-500" : "text-gray-800"
+            }`}
+            style={{
+              transition: "color 0.5s ease", // Smooth color transition
+            }}
+          >
+            {item.description}
+          </span>
+
+          {/* Dynamic Strike-Through Animation */}
+          <span
+            className={`absolute bottom-1/2 left-0 h-[1px] bg-gray-500`}
+            style={{
+              width: item.completed ? `${textWidth}px` : "0px", // Dynamic width
+              transform: "translateY(50%)", // Center the strike line
+              transition: "width 0.5s ease", // Animate the width of the line
+            }}
+          ></span>
         </span>
+
         {item.details && (
           <span
             className={`text-xs ${
               item.completed ? "line-through text-gray-400" : "text-gray-500"
             }`}
+            style={{
+              transition: "all 1s ease-in-out",
+            }}
           >
             {item.details}
           </span>
@@ -85,13 +116,11 @@ const ScheduleItem = ({ item, toggleComplete, isLast }) => {
 
           {/* SVG Circle for both checked and unchecked states */}
           <span
-            className={`absolute top-0 left-0 w-5 h-5 flex items-center justify-center  ${
-              item.completed ? item.iconColor : "#d1d5db" // Set border color based on state
-            }`}
+            className={`absolute top-0 left-0 w-5 h-5 flex items-center justify-center`}
           >
             <svg
-              width="18"
-              height="17"
+              width="19"
+              height="18"
               viewBox="0 0 18 17"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -103,13 +132,14 @@ const ScheduleItem = ({ item, toggleComplete, isLast }) => {
                 strokeWidth="1.64963"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                fill={item.completed ? item.iconColor : "none"} // Add fill color when checked
               />
             </svg>
 
             {/* Show Tick Mark on Check */}
             {item.completed && (
               <span
-                className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm font-thin`}
+                className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white`} // Tick mark in white
               >
                 <TiTick className="text-lg" />
               </span>

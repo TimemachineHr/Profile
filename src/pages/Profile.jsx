@@ -13,12 +13,10 @@ const Profile = () => {
 
   const triggerConfetti = () => {
     setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
+    setTimeout(() => setShowConfetti(false), 5000);
   };
 
   useEffect(() => {
-    // Example: Trigger confetti when the Profile page loads
-    // You can customize this condition
     triggerConfetti();
   }, []);
 
@@ -29,7 +27,6 @@ const Profile = () => {
         <Attendance />
         <ApplyLeave />
         <Notifications />
-        {/* Pass the triggerConfetti function to DailySchedule */}
         <DailySchedule triggerConfetti={triggerConfetti} />
         <Tasks />
         <PaySlip />

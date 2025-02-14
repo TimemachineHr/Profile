@@ -242,11 +242,16 @@ const DailySchedule = ({ triggerConfetti }) => {
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-bold text-lg text-gray-800">Plan My Day</h3>
         <div
-          className="flex items-center space-x-2"
-          title={"These plans are visible only to you (private)"}
+          className="relative flex items-center space-x-2 group"
+          // title="PRIVATE - These plans are visible only to you"
         >
           <FaLock className="text-gray-500" />
           <span className="text-gray-700">Private</span>
+
+          {/* Tooltip (Visible on hover, aligned to the left) */}
+          <div className="absolute hidden group-hover:block bg-white text-sm text-gray-700 border rounded-lg shadow-lg p-2 w-40 top-full mr-2">
+            Only you can see this
+          </div>
         </div>
       </div>
 

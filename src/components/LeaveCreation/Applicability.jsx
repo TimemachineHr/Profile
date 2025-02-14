@@ -162,7 +162,7 @@ const Applicability = ({ handleTabChange, leaveData, setLeaveData }) => {
               className="bg-green-600 text-white px-6 py-2 rounded-lg"
             >
               <BiCheckDouble size={28} className="inline mr-2" /> Assigned
-              <FaEdit className="inline ml-2" />
+              {/* <FaEdit className="inline ml-2" /> */}
             </button>
           </div>
           <hr className="my-6 border-gray-300" />

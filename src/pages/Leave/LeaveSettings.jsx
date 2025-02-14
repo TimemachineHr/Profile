@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
+import { FaPlus, FaTimes } from "react-icons/fa";
+import { BiCheckDouble } from "react-icons/bi";
 import LeaveHeader from "../../components/Main/LeaveHeader";
 import axios from "axios";
 
-//  Paid through----- at employment termination or End of Leave Calendar
+// Paid through----- at employment termination or End of Leave Calendar
 // how : Payroll / Adhoc
 // When : Termination/YEarend
 // what : actual days/all(At leave type creation)
@@ -14,7 +16,7 @@ const LeaveSettings = () => {
     endDate: "",
     approvalStatus: "preapprove",
     paymentMethod: "payroll",
-    approvers: [{ businessUnit: "", approverName: "" }],
+    approvers: [{ businessUnit: "", designation: "", approverName: "" }],
     timeOffChecked: false,
     timeOffHoursPerDay: undefined,
     blockLeaveChecked: false,
@@ -23,6 +25,9 @@ const LeaveSettings = () => {
     offInLieuChecked: false,
     offInLieuTimeBound: "",
   });
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [popupInputValue, setPopupInputValue] = useState("");
+  const [isAssigned, setIsAssigned] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,11 +44,27 @@ const LeaveSettings = () => {
     setFormData((prev) => ({ ...prev, approvers: updatedApprovers }));
   };
 
+  const openConfirmPopup = () => {
+    setIsPopupVisible(true);
+  };
+
+  const confirmAssignApprover = () => {
+    if (popupInputValue === "Assign") {
+      setIsAssigned(true);
+      setIsPopupVisible(false);
+    }
+  };
+
   const addApprover = () => {
     setFormData((prev) => ({
       ...prev,
-      approvers: [...prev.approvers, { businessUnit: "", approverName: "" }],
+      approvers: [
+        ...prev.approvers,
+        { businessUnit: "", designation: "", approverName: "" },
+      ],
     }));
+    setIsPopupVisible(false);
+    setIsAssigned(false);
   };
 
   const removeApprover = (index) => {
@@ -56,7 +77,6 @@ const LeaveSettings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Format data for backend submission
     const formattedData = {
       ...formData,
       startDate: formData.startDate
@@ -100,9 +120,7 @@ const LeaveSettings = () => {
       <form onSubmit={handleSubmit}>
         <div className="p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Section */}
             <div className="space-y-6">
-              {/* Leave Calendar */}
               <div>
                 <label className="block text-xl font-semibold text-gray-700 mb-2">
                   Leave Calendar
@@ -142,7 +160,6 @@ const LeaveSettings = () => {
                 </label>
               </div>
 
-              {/* En-cashable Payment */}
               <div>
                 <label className="block text-xl font-semibold text-gray-700 mb-2">
                   En-cashable Payment
@@ -156,13 +173,25 @@ const LeaveSettings = () => {
                     className="p-2 border rounded-md w-36"
                   >
                     <option value="payroll">Payroll</option>
-                    <option value="adhoc">Ad-Hoc</option>
+                    <option value="manual">Manual</option>
                   </select>{" "}
-                  at employment termination or End of Leave Calendar
+                  at{" "}
+                  <select
+                    // name="paymentMethod"
+                    // value={formData.paymentMethod}
+                    onChange={handleInputChange}
+                    className="p-2 border rounded-md w-58"
+                  >
+                    <option value="employmenttermination">
+                      Employment Termination
+                    </option>
+                    <option value="endofleavecalendar">
+                      End of Leave Calendar
+                    </option>
+                  </select>{" "}
                 </label>
               </div>
 
-              {/* Leave Approver */}
               <div>
                 <label className="block text-xl font-medium text-gray-700 mb-2">
                   Leave Approver
@@ -183,6 +212,21 @@ const LeaveSettings = () => {
                       <option value="">Business Unit</option>
                       <option value="unit1">Unit 1</option>
                       <option value="unit2">Unit 2</option>
+                    </select>
+                    <select
+                      className="p-2 border rounded-md w-36"
+                      value={approver.designation}
+                      onChange={(e) =>
+                        handleApproverChange(
+                          index,
+                          "designation",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="">Designation</option>
+                      <option value="design1">Design 1</option>
+                      <option value="design2">Design 2</option>
                     </select>
                     <select
                       className="p-2 border rounded-md w-38"
@@ -210,21 +254,92 @@ const LeaveSettings = () => {
                         <AiOutlineDelete size={20} />
                       </button>
                     )}
+                    {index === formData.approvers.length - 1 && (
+                      <button
+                        type="button"
+                        onClick={addApprover}
+                        className="text-blue-600 bg-gray-300 rounded-full p-1  hover:text-blue-800"
+                      >
+                        <FaPlus size={15} />
+                      </button>
+                    )}
                   </div>
                 ))}
                 <button
                   type="button"
-                  onClick={addApprover}
-                  className="bg-[#1A72A7] text-white px-4 py-2 rounded-md mt-2"
+                  onClick={openConfirmPopup}
+                  className="bg-[#1A72A7] text-white px-4 py-2 rounded-md mt-2 flex items-center gap-2"
                 >
-                  Assign Approver
+                  {isAssigned ? (
+                    <>
+                      <BiCheckDouble size={28} className="inline" />
+                      <span>Assigned</span>
+                    </>
+                  ) : (
+                    "Assign Approver"
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Right Section */}
+            {/* Popup Modal */}
+            {isPopupVisible && (
+              <div
+                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+              >
+                <div className="bg-white rounded-lg px-6 pt-4 pb-6 shadow-lg w-96">
+                  <div className="flex justify-between items-center">
+                    <h2
+                      id="modal-title"
+                      className="text-lg font-bold mb-4 text-gray-700"
+                    >
+                      Assign Approver
+                    </h2>
+                    <button
+                      className="font-normal text-sm text-gray-700 hover:text-red-500 mb-3"
+                      onClick={() => setIsPopupVisible(false)}
+                    >
+                      <FaTimes size={24} />
+                    </button>
+                  </div>
+                  <p className="mb-6 text-gray-700 text-sm">
+                    Please type <span className="font-semibold">"Assign"</span>{" "}
+                    to add a new approver.
+                  </p>
+                  <input
+                    type="text"
+                    value={popupInputValue}
+                    onChange={(e) => setPopupInputValue(e.target.value)}
+                    placeholder="Assign"
+                    className="border border-gray-300 rounded-md px-4 py-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onCopy={(e) => {
+                      e.preventDefault();
+                    }}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                    }}
+                  />
+                  <div className="flex justify-end gap-4">
+                    <button
+                      className={`${
+                        popupInputValue === "Assign"
+                          ? "bg-blue-500"
+                          : "bg-gray-400 cursor-not-allowed"
+                      } text-white font-normal text-lg px-4 py-1 rounded-lg shadow-lg`}
+                      onClick={confirmAssignApprover}
+                      disabled={popupInputValue !== "Assign"}
+                    >
+                      Assign
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-6">
-              {/* Time Off */}
               <div>
                 <label className="flex items-center space-x-2">
                   <input
@@ -255,7 +370,6 @@ const LeaveSettings = () => {
                 )}
               </div>
 
-              {/* Block Leave */}
               <div>
                 <label className="flex items-center space-x-2">
                   <input
@@ -321,7 +435,6 @@ const LeaveSettings = () => {
                 )}
               </div>
 
-              {/* Off-In-Lieu */}
               <div>
                 <label className="flex items-center space-x-2">
                   <input
@@ -352,7 +465,6 @@ const LeaveSettings = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
           <div className="mt-8 text-right">
             <button
               type="submit"
