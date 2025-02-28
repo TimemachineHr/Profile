@@ -7,19 +7,64 @@ import { IoPeople } from "react-icons/io5";
 import { IoIosSend } from "react-icons/io";
 import CommunicationHeader from "../../components/Main/CommunicationHeader";
 import LetterTemplates from "../../components/Communication/LetterTemplates";
+import FormEditor from "./FormEditor";
+import FormViewer from "../../components/Communication/FormViewer";
 
 const Communication = () => {
   const [communications, setCommunications] = useState([
-    { id: 1, type: "Form", name: "New Hardware Require", status: "Draft" },
-    { id: 2, type: "Form", name: "Feedback Form", status: "Published" },
-    { id: 3, type: "Letter", name: "Leave Letter", status: "Draft" },
     {
-      id: 4,
-      type: "Letter",
-      name: "Request for Extension",
+      id: 1,
+      type: "Form",
+      formTitle: "Employee Survey",
+      questions: [
+        {
+          id: 1739875400001,
+          text: "What is your role?",
+          type: "shortAnswer",
+          options: [],
+          required: true,
+        },
+        {
+          id: 1739875400002,
+          text: "How satisfied are you with your work environment?",
+          type: "multipleChoice",
+          options: ["Very Satisfied", "Satisfied", "Neutral", "Dissatisfied"],
+          required: true,
+        },
+      ],
+      status: "Draft",
+    },
+    {
+      id: 2,
+      type: "Form",
+      formTitle: "Feedback Form",
+      questions: [
+        {
+          id: 1739875460666,
+          text: "Question 1",
+          type: "shortAnswer",
+          options: [],
+          required: true,
+        },
+        {
+          id: 1739875474118,
+          text: "Options Question",
+          type: "multipleChoice",
+          options: ["Option 1", "Option 2"],
+          required: false,
+        },
+        {
+          id: 1739875482288,
+          text: "File Question",
+          type: "fileUpload",
+          options: [],
+          required: true,
+        },
+      ],
       status: "Published",
     },
   ]);
+
   const [filter, setFilter] = useState("All");
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [showPublishPopup, setShowPublishPopup] = useState(false);
@@ -28,7 +73,11 @@ const Communication = () => {
   const [editingName, setEditingName] = useState("");
   const [announcements, setAnnouncements] = useState([]);
   const [hasAnnouncements, setHasAnnouncements] = useState(false);
+  const [showFormEditor, setShowFormEditor] = useState(false);
+  const [editingForm, setEditingForm] = useState(null); // Store form data
+  const [selectedFormData, setSelectedFormData] = useState(null); // Store selected form data
 
+  console.log("data", selectedFormData);
   const handleNameChange = (id) => {
     setCommunications(
       communications.map((comm) =>
@@ -48,12 +97,17 @@ const Communication = () => {
 
   const handleAddCommunication = (type) => {
     const newCommunication = {
-      id: communications.length + 1,
+      id: Date.now(),
       type,
       name: `New ${type}`,
       status: "Draft",
+      formData: null,
     };
     setCommunications((prev) => [...prev, newCommunication]);
+    if (type === "Form") {
+      setEditingForm(newCommunication);
+      setShowFormEditor(true);
+    }
   };
 
   const [showAnnouncementPopup, setShowAnnouncementPopup] = useState(false);
@@ -61,10 +115,41 @@ const Communication = () => {
     audience: "All",
     method: "Email",
     message: "",
+    subject: "",
+    businessUnit: "All",
+    department: "All",
+    designation: "All",
+    externalUsers: false,
   });
 
   const handleAnnouncementChange = (field, value) => {
     setAnnouncement((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSaveForm = (formData) => {
+    setCommunications((prev) => {
+      const existingIndex = prev.findIndex((comm) => comm.id === formData.id);
+      if (existingIndex !== -1) {
+        const updated = [...prev];
+        updated[existingIndex] = formData;
+        return updated;
+      }
+      return [...prev, formData];
+    });
+    setShowFormEditor(false);
+    setEditingForm(null);
+    if (formData.status !== "Draft") {
+      setSelectedFormData(formData);
+    }
+  };
+
+  const handleEditForm = (comm) => {
+    setEditingForm(comm);
+    setShowFormEditor(true);
+  };
+
+  const handleViewForm = (comm) => {
+    setSelectedFormData(comm.formData);
   };
 
   const handleSendAnnouncement = () => {
@@ -75,9 +160,22 @@ const Communication = () => {
       announcement.department &&
       announcement.designation
     ) {
-      setAnnouncements((prev) => [...prev, announcement]);
+      setAnnouncements((prev) => [
+        ...prev,
+        { ...announcement, createdAt: Date.now() },
+      ]); // Add createdAt
       setHasAnnouncements(true);
       setShowAnnouncementPopup(false);
+      setAnnouncement({
+        audience: "All",
+        method: "Email",
+        message: "",
+        subject: "",
+        businessUnit: "All",
+        department: "All",
+        designation: "All",
+        externalUsers: false,
+      });
     } else {
       alert("Please fill in all the fields before sending the announcement.");
     }
@@ -100,9 +198,21 @@ const Communication = () => {
     }
   };
 
+  const handleCardClick = (comm) => {
+    if (comm.status === "Published") {
+      handleViewForm(comm);
+    } else if (comm.status === "Draft") {
+      // handleEditForm(comm);
+      window.location.href = `/form/${comm.id}`;
+    }
+  };
+
   return (
     <>
-      <CommunicationHeader onAddCommunication={handleAddCommunication} />
+      <CommunicationHeader
+        setShowFormEditor={setShowFormEditor}
+        onAddCommunication={handleAddCommunication}
+      />
 
       <div className="px-6 pt-6 h-[calc(100vh-120px)] flex flex-col">
         <div className="flex-1 overflow-y-auto">
@@ -110,61 +220,62 @@ const Communication = () => {
             <div className="px-4">
               <h3 className="text-xl font-semibold mb-4">Forms</h3>
               <div className="flex gap-6 overflow-x-auto">
-                {filteredCommunications
-                  .filter((comm) => comm.type === "Form")
-                  .map((comm) => (
+                {communications.map((form) => (
+                  <div
+                    key={form.id}
+                    className="w-28 h-28 p-4 border rounded-xl shadow-md relative bg-white hover:cursor-pointer"
+                    onClick={() =>
+                      form.status === "Draft"
+                        ? (setEditingForm(form), setShowFormEditor(true))
+                        : setSelectedFormData(form)
+                    }
+                  >
+                    {/* Status Badge */}
                     <div
-                      key={comm.id}
-                      className="w-28 h-28 p-4 border rounded-xl shadow-md relative bg-white hover:cursor-pointer"
-                      onClick={() => {
-                        if (comm.type === "Form") {
-                          window.location.href = `/form/${comm.id}`;
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the card's onClick
+                        if (form.status === "Draft") {
+                          handlePublishClick(form);
+                        } else {
+                          handleUpdateStatus(form.id, "Published");
                         }
                       }}
+                      className={`absolute bottom-4 right-0 px-3 py-1 text-xs rounded text-white ${
+                        form.status === "Draft"
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
+                      }`}
                     >
-                      <div
-                        onClick={() => {
-                          if (comm.status === "Draft") {
-                            handlePublishClick(comm);
-                          } else {
-                            handleUpdateStatus(comm.id, "Published");
+                      {form.status}
+                    </div>
+
+                    {/* Editable Title for Drafts */}
+                    {form.status === "Draft" && editingId === form.id ? (
+                      <input
+                        type="text"
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        onBlur={() => handleNameChange(form.id)}
+                        className="w-full text-md font-semibold border-b focus:outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <h3
+                        className={`text-sm font-semibold ${
+                          form.status === "Draft" ? "hover:underline" : ""
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (form.status === "Published") {
+                            handleEditForm(form);
                           }
                         }}
-                        className={`absolute bottom-4 right-0 px-3 py-1 text-xs rounded text-white ${
-                          comm.status === "Draft"
-                            ? "bg-yellow-500"
-                            : "bg-green-500"
-                        }`}
                       >
-                        {comm.status}
-                      </div>
-
-                      {comm.status === "Draft" && editingId === comm.id ? (
-                        <input
-                          type="text"
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          onBlur={() => handleNameChange(comm.id)}
-                          className="w-full text-md font-semibold border-b focus:outline-none"
-                          autoFocus
-                        />
-                      ) : (
-                        <h3
-                          className={`text-sm font-semibold ${
-                            comm.status === "Draft" ? "hover:underline" : ""
-                          }`}
-                          onClick={() => {
-                            if (comm.status === "Draft") {
-                              setEditingId(comm.id);
-                              setEditingName(comm.name);
-                            }
-                          }}
-                        >
-                          {comm.name}
-                        </h3>
-                      )}
-                    </div>
-                  ))}
+                        {form.formTitle}
+                      </h3>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -262,6 +373,90 @@ const Communication = () => {
           </div>
         </div>
       </div>
+
+      {showFormEditor && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-2 rounded-xl shadow-lg w-3/4 h-[90vh] overflow-y-auto">
+            <FormEditor
+              initialFormData={editingForm}
+              onSave={handleSaveForm}
+              onCancel={() => setShowFormEditor(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* {selectedFormData && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-2/4 h-3/4 overflow-y-auto relative">
+            <button
+              onClick={() => setSelectedFormData(null)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <FaTimes size={20} />
+            </button>
+
+            <h3 className="text-xl font-semibold mb-4">
+              {selectedFormData.formTitle}
+            </h3>
+
+            {selectedFormData.questions &&
+            selectedFormData.questions.length > 0 ? (
+              <div className="space-y-4">
+                {selectedFormData.questions.map((q, index) => (
+                  <div
+                    key={index}
+                    className="mb-4 p-4 border rounded bg-gray-50"
+                  >
+                    <p className="font-medium mb-2">{q.text}</p>
+                    {q.type === "shortAnswer" && (
+                      <input
+                        type="text"
+                        className="w-full border p-2 rounded"
+                        placeholder="Short Answer"
+                        disabled
+                      />
+                    )}
+                    {q.type === "paragraph" && (
+                      <textarea
+                        className="w-full border p-2 rounded"
+                        placeholder="Long Answer"
+                        disabled
+                      />
+                    )}
+                    {["multipleChoice", "checkboxes", "dropdown"].includes(
+                      q.type
+                    ) && (
+                      <div className="space-y-2">
+                        {q.options.map((option, i) => (
+                          <div key={i} className="flex items-center gap-4">
+                            {q.type === "multipleChoice" && (
+                              <input type="radio" disabled />
+                            )}
+                            {q.type === "checkboxes" && (
+                              <input type="checkbox" disabled />
+                            )}
+                            <span>{option}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {q.type === "fileUpload" && (
+                      <p className="text-gray-600 italic">File upload field</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No questions available.</p>
+            )}
+          </div>
+        </div>
+      )} */}
+      <FormViewer
+        selectedFormData={selectedFormData}
+        setSelectedFormData={setSelectedFormData}
+      />
 
       {showAnnouncementPopup && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-20">

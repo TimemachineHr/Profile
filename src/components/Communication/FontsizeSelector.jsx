@@ -1,7 +1,7 @@
 import { MdTextFields } from "react-icons/md";
 import React, { useState } from "react";
 
-const FontSizeSelector = ({ headerStyles, setHeaderStyles }) => {
+const FontSizeSelector = ({ fontSize, onChange }) => {
   const [isFontSizeOpen, setIsFontSizeOpen] = useState(false);
 
   return (
@@ -21,11 +21,9 @@ const FontSizeSelector = ({ headerStyles, setHeaderStyles }) => {
           <ul className="p-2 space-y-2">
             <li>
               <button
-                onClick={() =>
-                  setHeaderStyles({ ...headerStyles, fontSize: "text-sm" })
-                }
+                onClick={() => onChange("text-sm")}
                 className={`w-full text-left px-2 py-1 rounded-md ${
-                  headerStyles.fontSize === "text-sm"
+                  fontSize === "text-sm"
                     ? "bg-gray-200 font-bold"
                     : "hover:bg-gray-100"
                 }`}
@@ -35,11 +33,9 @@ const FontSizeSelector = ({ headerStyles, setHeaderStyles }) => {
             </li>
             <li>
               <button
-                onClick={() =>
-                  setHeaderStyles({ ...headerStyles, fontSize: "text-base" })
-                }
+                onClick={() => onChange("text-base")}
                 className={`w-full text-left px-2 py-1 rounded-md ${
-                  headerStyles.fontSize === "text-base"
+                  fontSize === "text-base"
                     ? "bg-gray-200 font-bold"
                     : "hover:bg-gray-100"
                 }`}
@@ -49,11 +45,9 @@ const FontSizeSelector = ({ headerStyles, setHeaderStyles }) => {
             </li>
             <li>
               <button
-                onClick={() =>
-                  setHeaderStyles({ ...headerStyles, fontSize: "text-lg" })
-                }
+                onClick={() => onChange("text-lg")}
                 className={`w-full text-left px-2 py-1 rounded-md ${
-                  headerStyles.fontSize === "text-lg"
+                  fontSize === "text-lg"
                     ? "bg-gray-200 font-bold"
                     : "hover:bg-gray-100"
                 }`}
@@ -63,11 +57,9 @@ const FontSizeSelector = ({ headerStyles, setHeaderStyles }) => {
             </li>
             <li>
               <button
-                onClick={() =>
-                  setHeaderStyles({ ...headerStyles, fontSize: "text-xl" })
-                }
+                onClick={() => onChange("text-xl")}
                 className={`w-full text-left px-2 py-1 rounded-md ${
-                  headerStyles.fontSize === "text-xl"
+                  fontSize === "text-xl"
                     ? "bg-gray-200 font-bold"
                     : "hover:bg-gray-100"
                 }`}

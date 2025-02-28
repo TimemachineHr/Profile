@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaPlus, FaTimes } from "react-icons/fa";
 
-const CommunicationHeader = ({ onAddCommunication }) => {
+const CommunicationHeader = ({ onAddCommunication, setShowFormEditor }) => {
   const [showPopup, setShowPopup] = useState(false);
   const location = useLocation(); // Get current location
 
@@ -47,6 +47,14 @@ const CommunicationHeader = ({ onAddCommunication }) => {
           </span>
         </Link>
         <Link
+          to="/brand"
+          className={`px-4 py-2 font-semibold rounded-lg transition duration-200 ${isActive(
+            "/brand"
+          )}`}
+        >
+          Brand
+        </Link>
+        <Link
           to="/communicationsettings"
           className={`px-4 py-2 font-semibold rounded-lg transition duration-200 ${isActive(
             "/communicationsettings"
@@ -81,7 +89,10 @@ const CommunicationHeader = ({ onAddCommunication }) => {
 
             <div className="flex flex-wrap justify-center items-center gap-6">
               <button
-                onClick={() => handleAdd("Form")}
+                onClick={() => {
+                  setShowFormEditor(true);
+                  closePopup();
+                }}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition"
               >
                 Form

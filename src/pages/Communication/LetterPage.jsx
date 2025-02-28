@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { TbArrowBackUp } from "react-icons/tb";
 
-const LetterPage = () => {
-  const { templateId } = useParams();
-  const [formData, setFormData] = useState({});
-  const templates = {
-    leave: `Dear [Recipient],
+export const templates = {
+  leave: `Dear [Recipient],
 
 I am writing to formally request leave for [Duration], starting from [Start Date] to [End Date]. The reason for my leave is [Reason], which I have ensured will not affect the continuity of my responsibilities. I have taken the necessary steps to delegate my tasks to [Colleague/Team] during my absence, and I am confident that there will be no disruption to ongoing projects.
 
@@ -16,7 +13,7 @@ Thank you for your understanding and support.
 
 Sincerely,
 [Sender]`,
-    expense: `Dear [Recipient],
+  expense: `Dear [Recipient],
 
 I am submitting my detailed expense claim for [Expense Details] incurred during the period of [Dates] as part of [Project/Work]. The total amount claimed is [Total Amount], which includes the following expenses:
 - [Expense Type 1]: [Amount]
@@ -29,7 +26,7 @@ If you require any additional details or clarification regarding this claim, ple
 
 Best regards,
 [Sender]`,
-    extension: `Dear [Recipient],
+  extension: `Dear [Recipient],
 
 I am writing to formally request an extension for [Project/Deadline] from the current deadline of [Current Deadline] to the proposed new deadline of [New Deadline]. The primary reason for this extension request is [Reason], which has impacted the initial timeline. 
 
@@ -44,7 +41,10 @@ Thank you for your understanding and consideration. I am happy to discuss this f
 
 Sincerely,
 [Sender]`,
-  };
+};
+const LetterPage = () => {
+  const { templateId } = useParams();
+  const [formData, setFormData] = useState({});
 
   const template = templates[templateId];
   const [content, setContent] = useState(template);

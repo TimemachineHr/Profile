@@ -26,6 +26,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PrivateRoute from "./components/PrivateRoute";
 import CompanySettings from "./pages/CompanySettings/CompanySettings";
+import BrandCommunication from "./pages/Communication/BrandCommunication";
+import MOMSubmissionForm from "./pages/IR8A/MOMSubmissionForm";
+import CPFSubmissionForm from "./pages/IR8A/CPFSubmissionForm";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -68,9 +71,12 @@ const App = () => {
         path="/communicationsettings"
         element={<CommunicationSettings />}
       />
+      <Route path="/brand" element={<BrandCommunication />} />
       <Route path="/submission" element={<Submission />} />
       <Route path="/ir8a/incometax" element={<IncomeTax />} />
       <Route path="/ir8a/incometaxform" element={<IncomeTaxForm />} />
+      <Route path="/ir8a/mom" element={<MOMSubmissionForm />} />
+      <Route path="/ir8a/cpf" element={<CPFSubmissionForm />} />
 
       <Route
         path="/profile"

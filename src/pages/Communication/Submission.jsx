@@ -270,7 +270,12 @@ const Submissions = () => {
                       Employee ID
                     </th>
                     {Object.keys(modalData[0])
-                      .filter((key) => key !== "typeId" && key !== "type")
+                      .filter(
+                        (key) =>
+                          key !== "typeId" &&
+                          key !== "type" &&
+                          key !== "employeeId"
+                      )
                       .map((field, index) => (
                         <th
                           key={index}
@@ -290,7 +295,12 @@ const Submissions = () => {
                         {submission.employeeId}
                       </td>
                       {Object.keys(submission)
-                        .filter((key) => key !== "typeId" && key !== "type")
+                        .filter(
+                          (key) =>
+                            key !== "typeId" &&
+                            key !== "type" &&
+                            key !== "employeeId"
+                        )
                         .map((key, idx) => (
                           <td key={idx} className="border px-4 py-2">
                             {submission[key]}
